@@ -1,0 +1,1281 @@
+{
+  "meta": {
+    "title": "AI Ecosystem Map",
+    "description": "Interactive map of the AI stack across six layers.",
+    "lastUpdated": "2026-05-23"
+  },
+  "layers": [
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure",
+      "description": "Compute, chips, and cloud powering AI workloads.",
+      "fullDescription": "The infrastructure layer spans semiconductors, hyperscale cloud, specialized AI compute, and networking. Capital flows here fund the physical foundation of the entire ecosystem.",
+      "fundingStatus": "$186B",
+      "fundingPercent": 92,
+      "companyCount": 48,
+      "growthTrend": 28,
+      "companies": [
+        {
+          "id": "nvidia",
+          "name": "NVIDIA",
+          "logo": "https://ui-avatars.com/api/?name=NVIDIA&background=random&color=fff&size=128",
+          "description": "GPU and AI accelerator leader.",
+          "valuation": "$3.2T",
+          "founded": 1993,
+          "website": "https://www.nvidia.com",
+          "category": "Semiconductors",
+          "social": {
+            "twitter": "https://twitter.com/search?q=NVIDIA",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=NVIDIA"
+          }
+        },
+        {
+          "id": "amd",
+          "name": "AMD",
+          "logo": "https://ui-avatars.com/api/?name=AMD&background=random&color=fff&size=128",
+          "description": "CPUs and AI GPUs.",
+          "valuation": "$280B",
+          "founded": 1969,
+          "website": "https://www.amd.com",
+          "category": "Semiconductors",
+          "social": {
+            "twitter": "https://twitter.com/search?q=AMD",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AMD"
+          }
+        },
+        {
+          "id": "coreweave",
+          "name": "CoreWeave",
+          "logo": "https://ui-avatars.com/api/?name=CoreWeave&background=random&color=fff&size=128",
+          "description": "GPU cloud for AI.",
+          "valuation": "$19B",
+          "founded": 2017,
+          "website": "https://www.coreweave.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/search?q=CoreWeave",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=CoreWeave"
+          }
+        },
+        {
+          "id": "lambda",
+          "name": "Lambda",
+          "logo": "https://ui-avatars.com/api/?name=Lambda&background=random&color=fff&size=128",
+          "description": "GPU cloud clusters.",
+          "valuation": "$1.5B",
+          "founded": 2012,
+          "website": "https://lambdalabs.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Lambda",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Lambda"
+          }
+        },
+        {
+          "id": "cerebras",
+          "name": "Cerebras",
+          "logo": "https://ui-avatars.com/api/?name=Cerebras&background=random&color=fff&size=128",
+          "description": "Wafer-scale AI processors.",
+          "valuation": "$4.1B",
+          "founded": 2016,
+          "website": "https://www.cerebras.net",
+          "category": "Chips",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Cerebras",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cerebras"
+          }
+        },
+        {
+          "id": "groq",
+          "name": "Groq",
+          "logo": "https://ui-avatars.com/api/?name=Groq&background=random&color=fff&size=128",
+          "description": "LPU inference chips.",
+          "valuation": "$2.8B",
+          "founded": 2016,
+          "website": "https://groq.com",
+          "category": "Chips",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Groq",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Groq"
+          }
+        },
+        {
+          "id": "aws",
+          "name": "AWS",
+          "logo": "https://ui-avatars.com/api/?name=AWS&background=random&color=fff&size=128",
+          "description": "Hyperscale AI cloud.",
+          "valuation": "N/A",
+          "founded": 2006,
+          "website": "https://aws.amazon.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/search?q=AWS",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AWS"
+          }
+        },
+        {
+          "id": "google-cloud",
+          "name": "Google Cloud",
+          "logo": "https://ui-avatars.com/api/?name=Google%20Cloud&background=random&color=fff&size=128",
+          "description": "TPU-backed infrastructure.",
+          "valuation": "N/A",
+          "founded": 2008,
+          "website": "https://cloud.google.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Google%20Cloud",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Google%20Cloud"
+          }
+        },
+        {
+          "id": "azure",
+          "name": "Microsoft Azure",
+          "logo": "https://ui-avatars.com/api/?name=Microsoft%20Azure&background=random&color=fff&size=128",
+          "description": "OpenAI-scale GPU regions.",
+          "valuation": "N/A",
+          "founded": 2010,
+          "website": "https://azure.microsoft.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Microsoft%20Azure",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Microsoft%20Azure"
+          }
+        },
+        {
+          "id": "databricks",
+          "name": "Databricks",
+          "logo": "https://ui-avatars.com/api/?name=Databricks&background=random&color=fff&size=128",
+          "description": "Unified data + AI platform.",
+          "valuation": "$43B",
+          "founded": 2013,
+          "website": "https://www.databricks.com",
+          "category": "Platform",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Databricks",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Databricks"
+          }
+        },
+        {
+          "id": "snowflake",
+          "name": "Snowflake",
+          "logo": "https://ui-avatars.com/api/?name=Snowflake&background=random&color=fff&size=128",
+          "description": "Data cloud for AI workloads.",
+          "valuation": "$55B",
+          "founded": 2012,
+          "website": "https://www.snowflake.com",
+          "category": "Data",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Snowflake",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Snowflake"
+          }
+        },
+        {
+          "id": "nebius",
+          "name": "Nebius",
+          "logo": "https://ui-avatars.com/api/?name=Nebius&background=random&color=fff&size=128",
+          "description": "European AI cloud.",
+          "valuation": "$2.2B",
+          "founded": 2024,
+          "website": "https://nebius.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Nebius",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Nebius"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "Infrastructure: Major funding round signals layer momentum",
+          "date": "2026-05-10",
+          "summary": "Venture capital concentrates in category leaders as enterprises accelerate adoption.",
+          "link": "https://news.google.com/search?q=Infrastructure%20AI"
+        },
+        {
+          "title": "Infrastructure: Enterprise adoption drives new partnerships",
+          "date": "2026-04-13",
+          "summary": "Fortune 500 pilots expand from proof-of-concept to production deployments.",
+          "link": "https://news.google.com/search?q=Infrastructure%20AI"
+        },
+        {
+          "title": "Infrastructure: Regulatory clarity shapes investment thesis",
+          "date": "2026-03-16",
+          "summary": "US and EU policy frameworks influence how investors price risk.",
+          "link": "https://news.google.com/search?q=Infrastructure%20AI"
+        },
+        {
+          "title": "Infrastructure: Open-source alternatives challenge incumbents",
+          "date": "2026-02-19",
+          "summary": "Efficient architectures and community roadmaps undercut pricing.",
+          "link": "https://news.google.com/search?q=Infrastructure%20AI"
+        },
+        {
+          "title": "Infrastructure: Consolidation wave expected in 2026",
+          "date": "2026-01-22",
+          "summary": "Analysts predict M&A as compute costs reshape competitive dynamics.",
+          "link": "https://news.google.com/search?q=Infrastructure%20AI"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "name": "Model",
+      "description": "Foundation models and research labs building core intelligence.",
+      "fullDescription": "Model-layer companies develop frontier LLMs, multimodal systems, and open-weight ecosystems. Funding concentrates on training scale, talent density, and proprietary data moats.",
+      "fundingStatus": "$124B",
+      "fundingPercent": 78,
+      "companyCount": 36,
+      "growthTrend": 34,
+      "companies": [
+        {
+          "id": "openai",
+          "name": "OpenAI",
+          "logo": "https://ui-avatars.com/api/?name=OpenAI&background=random&color=fff&size=128",
+          "description": "GPT and enterprise AI.",
+          "valuation": "$300B",
+          "founded": 2015,
+          "website": "https://openai.com",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=OpenAI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=OpenAI"
+          }
+        },
+        {
+          "id": "anthropic",
+          "name": "Anthropic",
+          "logo": "https://ui-avatars.com/api/?name=Anthropic&background=random&color=fff&size=128",
+          "description": "Claude models.",
+          "valuation": "$61B",
+          "founded": 2021,
+          "website": "https://www.anthropic.com",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Anthropic",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Anthropic"
+          }
+        },
+        {
+          "id": "google-deepmind",
+          "name": "Google DeepMind",
+          "logo": "https://ui-avatars.com/api/?name=Google%20DeepMind&background=random&color=fff&size=128",
+          "description": "Gemini research.",
+          "valuation": "N/A",
+          "founded": 2010,
+          "website": "https://deepmind.google",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Google%20DeepMind",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Google%20DeepMind"
+          }
+        },
+        {
+          "id": "meta-ai",
+          "name": "Meta AI",
+          "logo": "https://ui-avatars.com/api/?name=Meta%20AI&background=random&color=fff&size=128",
+          "description": "Llama open models.",
+          "valuation": "N/A",
+          "founded": 2013,
+          "website": "https://ai.meta.com",
+          "category": "Open Weights",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Meta%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Meta%20AI"
+          }
+        },
+        {
+          "id": "mistral",
+          "name": "Mistral AI",
+          "logo": "https://ui-avatars.com/api/?name=Mistral%20AI&background=random&color=fff&size=128",
+          "description": "European frontier models.",
+          "valuation": "$14B",
+          "founded": 2023,
+          "website": "https://mistral.ai",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Mistral%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Mistral%20AI"
+          }
+        },
+        {
+          "id": "cohere",
+          "name": "Cohere",
+          "logo": "https://ui-avatars.com/api/?name=Cohere&background=random&color=fff&size=128",
+          "description": "Enterprise LLMs.",
+          "valuation": "$7B",
+          "founded": 2019,
+          "website": "https://cohere.com",
+          "category": "Enterprise",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Cohere",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cohere"
+          }
+        },
+        {
+          "id": "ai21",
+          "name": "AI21 Labs",
+          "logo": "https://ui-avatars.com/api/?name=AI21%20Labs&background=random&color=fff&size=128",
+          "description": "Jurassic models.",
+          "valuation": "$1.4B",
+          "founded": 2017,
+          "website": "https://www.ai21.com",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=AI21%20Labs",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AI21%20Labs"
+          }
+        },
+        {
+          "id": "stability",
+          "name": "Stability AI",
+          "logo": "https://ui-avatars.com/api/?name=Stability%20AI&background=random&color=fff&size=128",
+          "description": "Diffusion models.",
+          "valuation": "$1B",
+          "founded": 2020,
+          "website": "https://stability.ai",
+          "category": "Multimodal",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Stability%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Stability%20AI"
+          }
+        },
+        {
+          "id": "inflection",
+          "name": "Inflection AI",
+          "logo": "https://ui-avatars.com/api/?name=Inflection%20AI&background=random&color=fff&size=128",
+          "description": "Personal AI Pi.",
+          "valuation": "$4B",
+          "founded": 2022,
+          "website": "https://inflection.ai",
+          "category": "Consumer",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Inflection%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Inflection%20AI"
+          }
+        },
+        {
+          "id": "xai",
+          "name": "xAI",
+          "logo": "https://ui-avatars.com/api/?name=xAI&background=random&color=fff&size=128",
+          "description": "Grok models.",
+          "valuation": "$50B",
+          "founded": 2023,
+          "website": "https://x.ai",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=xAI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=xAI"
+          }
+        },
+        {
+          "id": "perplexity",
+          "name": "Perplexity",
+          "logo": "https://ui-avatars.com/api/?name=Perplexity&background=random&color=fff&size=128",
+          "description": "Answer engine.",
+          "valuation": "$18B",
+          "founded": 2022,
+          "website": "https://www.perplexity.ai",
+          "category": "Search",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Perplexity",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Perplexity"
+          }
+        },
+        {
+          "id": "aleph-alpha",
+          "name": "Aleph Alpha",
+          "logo": "https://ui-avatars.com/api/?name=Aleph%20Alpha&background=random&color=fff&size=128",
+          "description": "Sovereign EU AI.",
+          "valuation": "$1.1B",
+          "founded": 2019,
+          "website": "https://aleph-alpha.com",
+          "category": "Foundation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Aleph%20Alpha",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Aleph%20Alpha"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "Model: Major funding round signals layer momentum",
+          "date": "2026-05-10",
+          "summary": "Venture capital concentrates in category leaders as enterprises accelerate adoption.",
+          "link": "https://news.google.com/search?q=Model%20AI"
+        },
+        {
+          "title": "Model: Enterprise adoption drives new partnerships",
+          "date": "2026-04-13",
+          "summary": "Fortune 500 pilots expand from proof-of-concept to production deployments.",
+          "link": "https://news.google.com/search?q=Model%20AI"
+        },
+        {
+          "title": "Model: Regulatory clarity shapes investment thesis",
+          "date": "2026-03-16",
+          "summary": "US and EU policy frameworks influence how investors price risk.",
+          "link": "https://news.google.com/search?q=Model%20AI"
+        },
+        {
+          "title": "Model: Open-source alternatives challenge incumbents",
+          "date": "2026-02-19",
+          "summary": "Efficient architectures and community roadmaps undercut pricing.",
+          "link": "https://news.google.com/search?q=Model%20AI"
+        },
+        {
+          "title": "Model: Consolidation wave expected in 2026",
+          "date": "2026-01-22",
+          "summary": "Analysts predict M&A as compute costs reshape competitive dynamics.",
+          "link": "https://news.google.com/search?q=Model%20AI"
+        }
+      ]
+    },
+    {
+      "id": "application",
+      "name": "Application",
+      "description": "Vertical AI products transforming industries and workflows.",
+      "fullDescription": "Application-layer startups productize AI into legal, healthcare, creative, sales, and enterprise workflows.",
+      "fundingStatus": "$89B",
+      "fundingPercent": 71,
+      "companyCount": 62,
+      "growthTrend": 41,
+      "companies": [
+        {
+          "id": "harvey",
+          "name": "Harvey",
+          "logo": "https://ui-avatars.com/api/?name=Harvey&background=random&color=fff&size=128",
+          "description": "Legal AI platform.",
+          "valuation": "$8B",
+          "founded": 2022,
+          "website": "https://www.harvey.ai",
+          "category": "Legal",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Harvey",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Harvey"
+          }
+        },
+        {
+          "id": "runway",
+          "name": "Runway",
+          "logo": "https://ui-avatars.com/api/?name=Runway&background=random&color=fff&size=128",
+          "description": "Generative video.",
+          "valuation": "$3B",
+          "founded": 2018,
+          "website": "https://runwayml.com",
+          "category": "Creative",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Runway",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Runway"
+          }
+        },
+        {
+          "id": "character-ai",
+          "name": "Character.AI",
+          "logo": "https://ui-avatars.com/api/?name=Character.AI&background=random&color=fff&size=128",
+          "description": "Conversational agents.",
+          "valuation": "$5B",
+          "founded": 2021,
+          "website": "https://character.ai",
+          "category": "Consumer",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Character.AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Character.AI"
+          }
+        },
+        {
+          "id": "jasper",
+          "name": "Jasper",
+          "logo": "https://ui-avatars.com/api/?name=Jasper&background=random&color=fff&size=128",
+          "description": "Marketing AI.",
+          "valuation": "$1.5B",
+          "founded": 2021,
+          "website": "https://www.jasper.ai",
+          "category": "Marketing",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Jasper",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Jasper"
+          }
+        },
+        {
+          "id": "notion-ai",
+          "name": "Notion AI",
+          "logo": "https://ui-avatars.com/api/?name=Notion%20AI&background=random&color=fff&size=128",
+          "description": "Workspace AI.",
+          "valuation": "N/A",
+          "founded": 2016,
+          "website": "https://www.notion.so",
+          "category": "Productivity",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Notion%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Notion%20AI"
+          }
+        },
+        {
+          "id": "github-copilot",
+          "name": "GitHub Copilot",
+          "logo": "https://ui-avatars.com/api/?name=GitHub%20Copilot&background=random&color=fff&size=128",
+          "description": "AI pair programmer.",
+          "valuation": "N/A",
+          "founded": 2008,
+          "website": "https://github.com/features/copilot",
+          "category": "DevTools",
+          "social": {
+            "twitter": "https://twitter.com/search?q=GitHub%20Copilot",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=GitHub%20Copilot"
+          }
+        },
+        {
+          "id": "cursor",
+          "name": "Cursor",
+          "logo": "https://ui-avatars.com/api/?name=Cursor&background=random&color=fff&size=128",
+          "description": "AI code editor.",
+          "valuation": "$9.9B",
+          "founded": 2022,
+          "website": "https://cursor.com",
+          "category": "DevTools",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Cursor",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cursor"
+          }
+        },
+        {
+          "id": "sierra",
+          "name": "Sierra",
+          "logo": "https://ui-avatars.com/api/?name=Sierra&background=random&color=fff&size=128",
+          "description": "CX agents.",
+          "valuation": "$4.5B",
+          "founded": 2023,
+          "website": "https://sierra.ai",
+          "category": "Enterprise",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Sierra",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Sierra"
+          }
+        },
+        {
+          "id": "glean",
+          "name": "Glean",
+          "logo": "https://ui-avatars.com/api/?name=Glean&background=random&color=fff&size=128",
+          "description": "Enterprise work AI.",
+          "valuation": "$7.2B",
+          "founded": 2019,
+          "website": "https://www.glean.com",
+          "category": "Enterprise",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Glean",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Glean"
+          }
+        },
+        {
+          "id": "adept",
+          "name": "Adept",
+          "logo": "https://ui-avatars.com/api/?name=Adept&background=random&color=fff&size=128",
+          "description": "Action models.",
+          "valuation": "$1B",
+          "founded": 2022,
+          "website": "https://www.adept.ai",
+          "category": "Automation",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Adept",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Adept"
+          }
+        },
+        {
+          "id": "synthesia",
+          "name": "Synthesia",
+          "logo": "https://ui-avatars.com/api/?name=Synthesia&background=random&color=fff&size=128",
+          "description": "AI video avatars.",
+          "valuation": "$2.1B",
+          "founded": 2017,
+          "website": "https://www.synthesia.io",
+          "category": "Video",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Synthesia",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Synthesia"
+          }
+        },
+        {
+          "id": "hebbia",
+          "name": "Hebbia",
+          "logo": "https://ui-avatars.com/api/?name=Hebbia&background=random&color=fff&size=128",
+          "description": "Finance document AI.",
+          "valuation": "$700M",
+          "founded": 2020,
+          "website": "https://www.hebbia.com",
+          "category": "Finance",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Hebbia",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Hebbia"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "Application: Major funding round signals layer momentum",
+          "date": "2026-05-10",
+          "summary": "Venture capital concentrates in category leaders as enterprises accelerate adoption.",
+          "link": "https://news.google.com/search?q=Application%20AI"
+        },
+        {
+          "title": "Application: Enterprise adoption drives new partnerships",
+          "date": "2026-04-13",
+          "summary": "Fortune 500 pilots expand from proof-of-concept to production deployments.",
+          "link": "https://news.google.com/search?q=Application%20AI"
+        },
+        {
+          "title": "Application: Regulatory clarity shapes investment thesis",
+          "date": "2026-03-16",
+          "summary": "US and EU policy frameworks influence how investors price risk.",
+          "link": "https://news.google.com/search?q=Application%20AI"
+        },
+        {
+          "title": "Application: Open-source alternatives challenge incumbents",
+          "date": "2026-02-19",
+          "summary": "Efficient architectures and community roadmaps undercut pricing.",
+          "link": "https://news.google.com/search?q=Application%20AI"
+        },
+        {
+          "title": "Application: Consolidation wave expected in 2026",
+          "date": "2026-01-22",
+          "summary": "Analysts predict M&A as compute costs reshape competitive dynamics.",
+          "link": "https://news.google.com/search?q=Application%20AI"
+        }
+      ]
+    },
+    {
+      "id": "integration",
+      "name": "Integration",
+      "description": "Tooling, APIs, and platforms connecting models to products.",
+      "fullDescription": "Integration covers orchestration frameworks, MLOps, vector databases, and developer platforms.",
+      "fundingStatus": "$42B",
+      "fundingPercent": 65,
+      "companyCount": 44,
+      "growthTrend": 38,
+      "companies": [
+        {
+          "id": "langchain",
+          "name": "LangChain",
+          "logo": "https://ui-avatars.com/api/?name=LangChain&background=random&color=fff&size=128",
+          "description": "LLM app framework.",
+          "valuation": "$1.25B",
+          "founded": 2022,
+          "website": "https://www.langchain.com",
+          "category": "Orchestration",
+          "social": {
+            "twitter": "https://twitter.com/search?q=LangChain",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=LangChain"
+          }
+        },
+        {
+          "id": "huggingface",
+          "name": "Hugging Face",
+          "logo": "https://ui-avatars.com/api/?name=Hugging%20Face&background=random&color=fff&size=128",
+          "description": "Model hub.",
+          "valuation": "$4.5B",
+          "founded": 2016,
+          "website": "https://huggingface.co",
+          "category": "Platform",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Hugging%20Face",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Hugging%20Face"
+          }
+        },
+        {
+          "id": "wandb",
+          "name": "Weights & Biases",
+          "logo": "https://ui-avatars.com/api/?name=Weights%20%26%20Biases&background=random&color=fff&size=128",
+          "description": "MLOps tracking.",
+          "valuation": "$200M",
+          "founded": 2017,
+          "website": "https://wandb.ai",
+          "category": "MLOps",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Weights%20%26%20Biases",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Weights%20%26%20Biases"
+          }
+        },
+        {
+          "id": "pinecone",
+          "name": "Pinecone",
+          "logo": "https://ui-avatars.com/api/?name=Pinecone&background=random&color=fff&size=128",
+          "description": "Vector DB for RAG.",
+          "valuation": "$750M",
+          "founded": 2019,
+          "website": "https://www.pinecone.io",
+          "category": "Vector DB",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Pinecone",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Pinecone"
+          }
+        },
+        {
+          "id": "weaviate",
+          "name": "Weaviate",
+          "logo": "https://ui-avatars.com/api/?name=Weaviate&background=random&color=fff&size=128",
+          "description": "Vector search.",
+          "valuation": "$125M",
+          "founded": 2019,
+          "website": "https://weaviate.io",
+          "category": "Vector DB",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Weaviate",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Weaviate"
+          }
+        },
+        {
+          "id": "arize",
+          "name": "Arize AI",
+          "logo": "https://ui-avatars.com/api/?name=Arize%20AI&background=random&color=fff&size=128",
+          "description": "LLM observability.",
+          "valuation": "$130M",
+          "founded": 2020,
+          "website": "https://arize.com",
+          "category": "Observability",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Arize%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Arize%20AI"
+          }
+        },
+        {
+          "id": "humanloop",
+          "name": "Humanloop",
+          "logo": "https://ui-avatars.com/api/?name=Humanloop&background=random&color=fff&size=128",
+          "description": "Prompt management.",
+          "valuation": "$50M",
+          "founded": 2020,
+          "website": "https://humanloop.com",
+          "category": "Prompting",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Humanloop",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Humanloop"
+          }
+        },
+        {
+          "id": "unstructured",
+          "name": "Unstructured",
+          "logo": "https://ui-avatars.com/api/?name=Unstructured&background=random&color=fff&size=128",
+          "description": "LLM document ETL.",
+          "valuation": "$65M",
+          "founded": 2022,
+          "website": "https://unstructured.io",
+          "category": "Data",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Unstructured",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Unstructured"
+          }
+        },
+        {
+          "id": "modal",
+          "name": "Modal",
+          "logo": "https://ui-avatars.com/api/?name=Modal&background=random&color=fff&size=128",
+          "description": "Serverless GPU.",
+          "valuation": "$1.1B",
+          "founded": 2021,
+          "website": "https://modal.com",
+          "category": "Compute",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Modal",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Modal"
+          }
+        },
+        {
+          "id": "replicate",
+          "name": "Replicate",
+          "logo": "https://ui-avatars.com/api/?name=Replicate&background=random&color=fff&size=128",
+          "description": "Model API hosting.",
+          "valuation": "$350M",
+          "founded": 2019,
+          "website": "https://replicate.com",
+          "category": "Inference",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Replicate",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Replicate"
+          }
+        },
+        {
+          "id": "anyscale",
+          "name": "Anyscale",
+          "logo": "https://ui-avatars.com/api/?name=Anyscale&background=random&color=fff&size=128",
+          "description": "Ray AI runtime.",
+          "valuation": "$1B",
+          "founded": 2019,
+          "website": "https://www.anyscale.com",
+          "category": "Runtime",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Anyscale",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Anyscale"
+          }
+        },
+        {
+          "id": "mlflow",
+          "name": "MLflow",
+          "logo": "https://ui-avatars.com/api/?name=MLflow&background=random&color=fff&size=128",
+          "description": "ML lifecycle OSS.",
+          "valuation": "N/A",
+          "founded": 2018,
+          "website": "https://mlflow.org",
+          "category": "MLOps",
+          "social": {
+            "twitter": "https://twitter.com/search?q=MLflow",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=MLflow"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "Integration: Major funding round signals layer momentum",
+          "date": "2026-05-10",
+          "summary": "Venture capital concentrates in category leaders as enterprises accelerate adoption.",
+          "link": "https://news.google.com/search?q=Integration%20AI"
+        },
+        {
+          "title": "Integration: Enterprise adoption drives new partnerships",
+          "date": "2026-04-13",
+          "summary": "Fortune 500 pilots expand from proof-of-concept to production deployments.",
+          "link": "https://news.google.com/search?q=Integration%20AI"
+        },
+        {
+          "title": "Integration: Regulatory clarity shapes investment thesis",
+          "date": "2026-03-16",
+          "summary": "US and EU policy frameworks influence how investors price risk.",
+          "link": "https://news.google.com/search?q=Integration%20AI"
+        },
+        {
+          "title": "Integration: Open-source alternatives challenge incumbents",
+          "date": "2026-02-19",
+          "summary": "Efficient architectures and community roadmaps undercut pricing.",
+          "link": "https://news.google.com/search?q=Integration%20AI"
+        },
+        {
+          "title": "Integration: Consolidation wave expected in 2026",
+          "date": "2026-01-22",
+          "summary": "Analysts predict M&A as compute costs reshape competitive dynamics.",
+          "link": "https://news.google.com/search?q=Integration%20AI"
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Security",
+      "description": "Safety, governance, and threat defense for AI systems.",
+      "fullDescription": "Security layer firms address model risk, prompt injection, data leakage, compliance, and red-teaming.",
+      "fundingStatus": "$18B",
+      "fundingPercent": 58,
+      "companyCount": 28,
+      "growthTrend": 45,
+      "companies": [
+        {
+          "id": "robust-intelligence",
+          "name": "Robust Intelligence",
+          "logo": "https://ui-avatars.com/api/?name=Robust%20Intelligence&background=random&color=fff&size=128",
+          "description": "AI firewall.",
+          "valuation": "$100M",
+          "founded": 2019,
+          "website": "https://www.robustintelligence.com",
+          "category": "Model Security",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Robust%20Intelligence",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Robust%20Intelligence"
+          }
+        },
+        {
+          "id": "hiddenlayer",
+          "name": "Hidden Layer",
+          "logo": "https://ui-avatars.com/api/?name=Hidden%20Layer&background=random&color=fff&size=128",
+          "description": "ML security.",
+          "valuation": "$50M",
+          "founded": 2022,
+          "website": "https://hiddenlayer.com",
+          "category": "MLSec",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Hidden%20Layer",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Hidden%20Layer"
+          }
+        },
+        {
+          "id": "lakera",
+          "name": "Lakera",
+          "logo": "https://ui-avatars.com/api/?name=Lakera&background=random&color=fff&size=128",
+          "description": "Prompt injection defense.",
+          "valuation": "$20M",
+          "founded": 2021,
+          "website": "https://www.lakera.ai",
+          "category": "Guardrails",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Lakera",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Lakera"
+          }
+        },
+        {
+          "id": "calypsoai",
+          "name": "CalypsoAI",
+          "logo": "https://ui-avatars.com/api/?name=CalypsoAI&background=random&color=fff&size=128",
+          "description": "Secure AI gateway.",
+          "valuation": "$38M",
+          "founded": 2018,
+          "website": "https://calypsoai.com",
+          "category": "Gateway",
+          "social": {
+            "twitter": "https://twitter.com/search?q=CalypsoAI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=CalypsoAI"
+          }
+        },
+        {
+          "id": "cranium",
+          "name": "Cranium",
+          "logo": "https://ui-avatars.com/api/?name=Cranium&background=random&color=fff&size=128",
+          "description": "AI GRC platform.",
+          "valuation": "$25M",
+          "founded": 2021,
+          "website": "https://cranium.ai",
+          "category": "GRC",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Cranium",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cranium"
+          }
+        },
+        {
+          "id": "protect-ai",
+          "name": "Protect AI",
+          "logo": "https://ui-avatars.com/api/?name=Protect%20AI&background=random&color=fff&size=128",
+          "description": "MLSOC security.",
+          "valuation": "$60M",
+          "founded": 2022,
+          "website": "https://protectai.com",
+          "category": "MLSOC",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Protect%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Protect%20AI"
+          }
+        },
+        {
+          "id": "witnessai",
+          "name": "WitnessAI",
+          "logo": "https://ui-avatars.com/api/?name=WitnessAI&background=random&color=fff&size=128",
+          "description": "AI activity monitoring.",
+          "valuation": "$27M",
+          "founded": 2023,
+          "website": "https://witness.ai",
+          "category": "Monitoring",
+          "social": {
+            "twitter": "https://twitter.com/search?q=WitnessAI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=WitnessAI"
+          }
+        },
+        {
+          "id": "aim-security",
+          "name": "AIM Security",
+          "logo": "https://ui-avatars.com/api/?name=AIM%20Security&background=random&color=fff&size=128",
+          "description": "AI governance.",
+          "valuation": "$18M",
+          "founded": 2023,
+          "website": "https://www.aim.security",
+          "category": "Governance",
+          "social": {
+            "twitter": "https://twitter.com/search?q=AIM%20Security",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AIM%20Security"
+          }
+        },
+        {
+          "id": "nightfall",
+          "name": "Nightfall AI",
+          "logo": "https://ui-avatars.com/api/?name=Nightfall%20AI&background=random&color=fff&size=128",
+          "description": "Gen AI DLP.",
+          "valuation": "$33M",
+          "founded": 2018,
+          "website": "https://www.nightfall.ai",
+          "category": "DLP",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Nightfall%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Nightfall%20AI"
+          }
+        },
+        {
+          "id": "openai-safety",
+          "name": "OpenAI Safety",
+          "logo": "https://ui-avatars.com/api/?name=OpenAI%20Safety&background=random&color=fff&size=128",
+          "description": "Alignment research.",
+          "valuation": "N/A",
+          "founded": 2015,
+          "website": "https://openai.com/safety",
+          "category": "Research",
+          "social": {
+            "twitter": "https://twitter.com/search?q=OpenAI%20Safety",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=OpenAI%20Safety"
+          }
+        },
+        {
+          "id": "anthropic-safety",
+          "name": "Anthropic Safety",
+          "logo": "https://ui-avatars.com/api/?name=Anthropic%20Safety&background=random&color=fff&size=128",
+          "description": "Constitutional AI.",
+          "valuation": "N/A",
+          "founded": 2021,
+          "website": "https://www.anthropic.com/research",
+          "category": "Research",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Anthropic%20Safety",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Anthropic%20Safety"
+          }
+        },
+        {
+          "id": "crowdstrike",
+          "name": "CrowdStrike",
+          "logo": "https://ui-avatars.com/api/?name=CrowdStrike&background=random&color=fff&size=128",
+          "description": "AI-powered cyber.",
+          "valuation": "$95B",
+          "founded": 2011,
+          "website": "https://www.crowdstrike.com",
+          "category": "Cyber",
+          "social": {
+            "twitter": "https://twitter.com/search?q=CrowdStrike",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=CrowdStrike"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "Security: Major funding round signals layer momentum",
+          "date": "2026-05-10",
+          "summary": "Venture capital concentrates in category leaders as enterprises accelerate adoption.",
+          "link": "https://news.google.com/search?q=Security%20AI"
+        },
+        {
+          "title": "Security: Enterprise adoption drives new partnerships",
+          "date": "2026-04-13",
+          "summary": "Fortune 500 pilots expand from proof-of-concept to production deployments.",
+          "link": "https://news.google.com/search?q=Security%20AI"
+        },
+        {
+          "title": "Security: Regulatory clarity shapes investment thesis",
+          "date": "2026-03-16",
+          "summary": "US and EU policy frameworks influence how investors price risk.",
+          "link": "https://news.google.com/search?q=Security%20AI"
+        },
+        {
+          "title": "Security: Open-source alternatives challenge incumbents",
+          "date": "2026-02-19",
+          "summary": "Efficient architectures and community roadmaps undercut pricing.",
+          "link": "https://news.google.com/search?q=Security%20AI"
+        },
+        {
+          "title": "Security: Consolidation wave expected in 2026",
+          "date": "2026-01-22",
+          "summary": "Analysts predict M&A as compute costs reshape competitive dynamics.",
+          "link": "https://news.google.com/search?q=Security%20AI"
+        }
+      ]
+    },
+    {
+      "id": "monetization",
+      "name": "Monetization",
+      "description": "Data marketplaces, billing, and revenue infrastructure.",
+      "fullDescription": "Monetization includes data labeling, RLHF services, usage-based billing, and marketplaces.",
+      "fundingStatus": "$31B",
+      "fundingPercent": 62,
+      "companyCount": 34,
+      "growthTrend": 33,
+      "companies": [
+        {
+          "id": "scale-ai",
+          "name": "Scale AI",
+          "logo": "https://ui-avatars.com/api/?name=Scale%20AI&background=random&color=fff&size=128",
+          "description": "RLHF and labeling.",
+          "valuation": "$14B",
+          "founded": 2016,
+          "website": "https://scale.com",
+          "category": "Data",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Scale%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Scale%20AI"
+          }
+        },
+        {
+          "id": "surge-ai",
+          "name": "Surge AI",
+          "logo": "https://ui-avatars.com/api/?name=Surge%20AI&background=random&color=fff&size=128",
+          "description": "Human feedback data.",
+          "valuation": "$1B",
+          "founded": 2020,
+          "website": "https://www.surgehq.ai",
+          "category": "Data",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Surge%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Surge%20AI"
+          }
+        },
+        {
+          "id": "labelbox",
+          "name": "Labelbox",
+          "logo": "https://ui-avatars.com/api/?name=Labelbox&background=random&color=fff&size=128",
+          "description": "Training data platform.",
+          "valuation": "$110M",
+          "founded": 2018,
+          "website": "https://labelbox.com",
+          "category": "Data",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Labelbox",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Labelbox"
+          }
+        },
+        {
+          "id": "stripe",
+          "name": "Stripe",
+          "logo": "https://ui-avatars.com/api/?name=Stripe&background=random&color=fff&size=128",
+          "description": "Usage-based billing.",
+          "valuation": "$95B",
+          "founded": 2010,
+          "website": "https://stripe.com",
+          "category": "Payments",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Stripe",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Stripe"
+          }
+        },
+        {
+          "id": "openrouter",
+          "name": "OpenRouter",
+          "logo": "https://ui-avatars.com/api/?name=OpenRouter&background=random&color=fff&size=128",
+          "description": "Model API marketplace.",
+          "valuation": "$50M",
+          "founded": 2023,
+          "website": "https://openrouter.ai",
+          "category": "Marketplace",
+          "social": {
+            "twitter": "https://twitter.com/search?q=OpenRouter",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=OpenRouter"
+          }
+        },
+        {
+          "id": "revenuecat",
+          "name": "RevenueCat",
+          "logo": "https://ui-avatars.com/api/?name=RevenueCat&background=random&color=fff&size=128",
+          "description": "Subscription infra.",
+          "valuation": "$500M",
+          "founded": 2017,
+          "website": "https://www.revenuecat.com",
+          "category": "Billing",
+          "social": {
+            "twitter": "https://twitter.com/search?q=RevenueCat",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=RevenueCat"
+          }
+        },
+        {
+          "id": "paddle",
+          "name": "Paddle",
+          "logo": "https://ui-avatars.com/api/?name=Paddle&background=random&color=fff&size=128",
+          "description": "MoR for SaaS AI.",
+          "valuation": "$1.4B",
+          "founded": 2012,
+          "website": "https://www.paddle.com",
+          "category": "Billing",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Paddle",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Paddle"
+          }
+        },
+        {
+          "id": "datarobot",
+          "name": "DataRobot",
+          "logo": "https://ui-avatars.com/api/?name=DataRobot&background=random&color=fff&size=128",
+          "description": "Enterprise AI ROI.",
+          "valuation": "$6.3B",
+          "founded": 2012,
+          "website": "https://www.datarobot.com",
+          "category": "Analytics",
+          "social": {
+            "twitter": "https://twitter.com/search?q=DataRobot",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=DataRobot"
+          }
+        },
+        {
+          "id": "helicone",
+          "name": "Helicone",
+          "logo": "https://ui-avatars.com/api/?name=Helicone&background=random&color=fff&size=128",
+          "description": "LLM cost tracking.",
+          "valuation": "$15M",
+          "founded": 2023,
+          "website": "https://www.helicone.ai",
+          "category": "FinOps",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Helicone",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Helicone"
+          }
+        },
+        {
+          "id": "langfuse",
+          "name": "Langfuse",
+          "logo": "https://ui-avatars.com/api/?name=Langfuse&background=random&color=fff&size=128",
+          "description": "LLM analytics OSS.",
+          "valuation": "$10M",
+          "founded": 2022,
+          "website": "https://langfuse.com",
+          "category": "Analytics",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Langfuse",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Langfuse"
+          }
+        },
+        {
+          "id": "predibase",
+          "name": "Predibase",
+          "logo": "https://ui-avatars.com/api/?name=Predibase&background=random&color=fff&size=128",
+          "description": "Fine-tune serving.",
+          "valuation": "$28M",
+          "founded": 2021,
+          "website": "https://predibase.com",
+          "category": "Serving",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Predibase",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Predibase"
+          }
+        },
+        {
+          "id": "together",
+          "name": "Together AI",
+          "logo": "https://ui-avatars.com/api/?name=Together%20AI&background=random&color=fff&size=128",
+          "description": "Inference marketplace.",
+          "valuation": "$3.3B",
+          "founded": 2022,
+          "website": "https://www.together.ai",
+          "category": "Marketplace",
+          "social": {
+            "twitter": "https://twitter.com/search?q=Together%20AI",
+            "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Together%20AI"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "Monetization: Major funding round signals layer momentum",
+          "date": "2026-05-10",
+          "summary": "Venture capital concentrates in category leaders as enterprises accelerate adoption.",
+          "link": "https://news.google.com/search?q=Monetization%20AI"
+        },
+        {
+          "title": "Monetization: Enterprise adoption drives new partnerships",
+          "date": "2026-04-13",
+          "summary": "Fortune 500 pilots expand from proof-of-concept to production deployments.",
+          "link": "https://news.google.com/search?q=Monetization%20AI"
+        },
+        {
+          "title": "Monetization: Regulatory clarity shapes investment thesis",
+          "date": "2026-03-16",
+          "summary": "US and EU policy frameworks influence how investors price risk.",
+          "link": "https://news.google.com/search?q=Monetization%20AI"
+        },
+        {
+          "title": "Monetization: Open-source alternatives challenge incumbents",
+          "date": "2026-02-19",
+          "summary": "Efficient architectures and community roadmaps undercut pricing.",
+          "link": "https://news.google.com/search?q=Monetization%20AI"
+        },
+        {
+          "title": "Monetization: Consolidation wave expected in 2026",
+          "date": "2026-01-22",
+          "summary": "Analysts predict M&A as compute costs reshape competitive dynamics.",
+          "link": "https://news.google.com/search?q=Monetization%20AI"
+        }
+      ]
+    }
+  ]
+}

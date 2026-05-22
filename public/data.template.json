@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "title": "AI Ecosystem Map",
+    "description": "Interactive map of the AI stack across six layers.",
+    "lastUpdated": "YYYY-MM-DD"
+  },
+  "layers": [
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure",
+      "description": "Short 1-2 line summary for homepage card.",
+      "fullDescription": "Full paragraph shown on the layer detail page.",
+      "fundingStatus": "$186B",
+      "fundingPercent": 92,
+      "companyCount": 48,
+      "growthTrend": 28,
+      "companies": [
+        {
+          "id": "company-slug",
+          "name": "Company Name",
+          "logo": "https://example.com/logo.png",
+          "description": "Brief company description.",
+          "valuation": "$10B",
+          "founded": 2020,
+          "website": "https://example.com",
+          "category": "Cloud",
+          "social": {
+            "twitter": "https://twitter.com/company",
+            "linkedin": "https://linkedin.com/company/company"
+          }
+        }
+      ],
+      "news": [
+        {
+          "title": "News headline",
+          "date": "2026-05-23",
+          "summary": "2-3 sentence summary.",
+          "link": "https://example.com/article"
+        }
+      ]
+    }
+  ]
+}
