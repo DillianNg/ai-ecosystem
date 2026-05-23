@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "generate-data": "node scripts/generate-data.mjs",
+    "build:data": "node scripts/build-companies.mjs",
     "postbuild": "cp public/.nojekyll out/.nojekyll 2>/dev/null || touch out/.nojekyll"
   },
   "dependencies": {
