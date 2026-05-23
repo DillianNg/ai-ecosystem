@@ -1,0 +1,86 @@
+{
+  "approaches": [
+    {
+      "id": "value-chain",
+      "label": "Value Chain",
+      "description": "View the AI stack as an inverted value funnel. Market outcomes and monetization sit at the wide top; each layer below narrows as capital and capability concentrate toward foundational infrastructure. This lens highlights how value flows downward through the stack and where bottlenecks form.",
+      "visualizationType": "funnel",
+      "layerOrder": [
+        "monetization",
+        "application",
+        "integration",
+        "security",
+        "model",
+        "infrastructure"
+      ]
+    },
+    {
+      "id": "infrastructure-data",
+      "label": "Infrastructure vs Data First",
+      "description": "Compare two foundational strategies side by side. Infrastructure-first builds upward from compute and platforms; data-first elevates pipelines, models, and integration before scaling outward to applications. Use this view to reason about build order, capex, and time-to-value.",
+      "visualizationType": "stacked",
+      "primaryLabel": "Infrastructure First",
+      "alternateLabel": "Data First",
+      "layerOrder": [
+        "infrastructure",
+        "model",
+        "security",
+        "integration",
+        "application",
+        "monetization"
+      ],
+      "alternateLayerOrder": [
+        "integration",
+        "model",
+        "application",
+        "security",
+        "infrastructure",
+        "monetization"
+      ]
+    },
+    {
+      "id": "human-in-loop",
+      "label": "Human-in-the-Loop",
+      "description": "Map collaboration between people and AI systems across the lifecycle. Humans set intent and govern outcomes; machines scale execution and inference. This approach emphasizes feedback loops, oversight, and shared accountability rather than a purely technical layer stack.",
+      "visualizationType": "human-loop",
+      "layerOrder": [
+        "application",
+        "integration",
+        "model",
+        "infrastructure"
+      ]
+    }
+  ],
+  "humanLoopSteps": [
+    {
+      "id": "intent",
+      "title": "Define intent",
+      "summary": "Humans frame goals, constraints, and success criteria.",
+      "actor": "human"
+    },
+    {
+      "id": "orchestrate",
+      "title": "Orchestrate workflow",
+      "summary": "Systems route tasks across models, tools, and data.",
+      "actor": "machine"
+    },
+    {
+      "id": "review",
+      "title": "Review & refine",
+      "summary": "People validate outputs, correct bias, and approve releases.",
+      "actor": "collaboration"
+    },
+    {
+      "id": "deploy",
+      "title": "Deploy at scale",
+      "summary": "Infrastructure runs inference and monitors reliability.",
+      "actor": "machine"
+    },
+    {
+      "id": "govern",
+      "title": "Govern outcomes",
+      "summary": "Humans audit impact, compliance, and continuous improvement.",
+      "actor": "human"
+    }
+  ]
+}

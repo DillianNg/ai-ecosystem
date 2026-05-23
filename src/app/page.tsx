@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { LayerGrid } from "@/components/home/LayerGrid";
+import { DashboardView } from "@/components/dashboard/DashboardView";
 import { getBundledData } from "@/lib/data";
+
 export default function HomePage() {
-  const { meta } = getBundledData();
+  const { meta, layers } = getBundledData();
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -27,7 +28,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <LayerGrid />
+      <DashboardView layers={layers} />
     </div>
   );
 }
