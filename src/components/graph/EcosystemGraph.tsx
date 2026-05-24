@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { GraphNode, GraphEdge } from "@/lib/ecosystem-utils";
 
@@ -488,6 +489,463 @@ export function EcosystemGraph({ nodes, edges }: EcosystemGraphProps) {
       <p className="pointer-events-none absolute bottom-4 right-4 text-[8px] tracking-[0.3em] text-white/10 uppercase">
         scroll zoom · drag pan · click inspect
       </p>
+=======
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Company, Layer } from "@/types/ecosystem";
+import { CompanyInfoCard } from "@/components/ui/CompanyInfoCard";
+import { LAYER_ACCENTS } from "@/lib/constants";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface SimNode {
+  id: string;
+  company: Company;
+  layerId: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  glowColor: string;
+}
+
+interface SimState {
+  nodes: SimNode[];
+  edges: [number, number][];
+  layerLabels: { name: string; x: number; y: number }[];
+  alpha: number;
+  panX: number;
+  panY: number;
+  scale: number;
+  width: number;
+  height: number;
+  // interaction
+  isPanning: boolean;
+  panStartX: number;
+  panStartY: number;
+  dragStartX: number;
+  dragStartY: number;
+  dragNodeIdx: number | null;
+  lastMouseX: number;
+  lastMouseY: number;
+}
+
+// ─── Layer glow colors (subtle, kept near grayscale for cinematic look) ──────
+
+const LAYER_GLOW: Record<string, string> = {
+  infrastructure: "rgba(56,189,248,0.7)",
+  model:          "rgba(167,139,250,0.7)",
+  application:    "rgba(52,211,153,0.7)",
+  integration:    "rgba(251,191,36,0.7)",
+  security:       "rgba(248,113,113,0.7)",
+  monetization:   "rgba(232,121,249,0.7)",
+};
+
+// ─── Simulation helpers ───────────────────────────────────────────────────────
+
+function layerClusterPositions(count: number, spread: number): [number, number][] {
+  return Array.from({ length: count }, (_, i) => {
+    const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+    return [Math.cos(angle) * spread, Math.sin(angle) * spread];
+  });
+}
+
+function initSim(layers: Layer[], width: number, height: number): SimState {
+  const nodes: SimNode[] = [];
+  const edges: [number, number][] = [];
+  const layerLabels: { name: string; x: number; y: number }[] = [];
+
+  const clusterSpread = Math.min(width, height) * 0.28;
+  const clusterPositions = layerClusterPositions(layers.length, clusterSpread);
+
+  layers.forEach((layer, li) => {
+    const [cx, cy] = clusterPositions[li];
+    layerLabels.push({ name: layer.name, x: cx, y: cy - 90 });
+
+    const count = layer.companies.length;
+    const nodeStart = nodes.length;
+
+    layer.companies.forEach((company, ci) => {
+      const angle = (ci / count) * Math.PI * 2;
+      const r = 30 + Math.random() * 50;
+      nodes.push({
+        id: company.id,
+        company,
+        layerId: layer.id,
+        x: cx + Math.cos(angle) * r + (Math.random() - 0.5) * 20,
+        y: cy + Math.sin(angle) * r + (Math.random() - 0.5) * 20,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        radius: 5,
+        glowColor: LAYER_GLOW[layer.id] ?? "rgba(255,255,255,0.6)",
+      });
+    });
+
+    // Ring edges within layer
+    for (let i = 0; i < count; i++) {
+      edges.push([nodeStart + i, nodeStart + (i + 1) % count]);
+      if (count > 4 && i % 3 === 0) {
+        edges.push([nodeStart + i, nodeStart + (i + Math.floor(count / 3)) % count]);
+      }
+    }
+  });
+
+  return {
+    nodes,
+    edges,
+    layerLabels,
+    alpha: 1,
+    panX: width / 2,
+    panY: height / 2,
+    scale: 1,
+    width,
+    height,
+    isPanning: false,
+    panStartX: 0,
+    panStartY: 0,
+    dragStartX: 0,
+    dragStartY: 0,
+    dragNodeIdx: null,
+    lastMouseX: 0,
+    lastMouseY: 0,
+  };
+}
+
+function tickSim(s: SimState) {
+  const { nodes, edges, alpha, width, height } = s;
+  const n = nodes.length;
+  const REPULSION = 4500;
+  const SPRING_K = 0.025;
+  const REST_LEN = 75;
+  const CENTER_K = 0.018;
+  const DAMPING = 0.82;
+  const MAX_VEL = 12;
+  const BOUNDARY = Math.min(width, height) * 0.46;
+
+  // Repulsion between all pairs
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      const d2 = Math.max(dx * dx + dy * dy, 4);
+      const d = Math.sqrt(d2);
+      const f = REPULSION / d2;
+      const fx = (f * dx) / d;
+      const fy = (f * dy) / d;
+      nodes[i].vx += fx;
+      nodes[i].vy += fy;
+      nodes[j].vx -= fx;
+      nodes[j].vy -= fy;
+    }
+  }
+
+  // Spring forces along edges
+  const springAlpha = Math.max(alpha, 0.15);
+  for (const [i, j] of edges) {
+    const dx = nodes[j].x - nodes[i].x;
+    const dy = nodes[j].y - nodes[i].y;
+    const d = Math.sqrt(dx * dx + dy * dy) + 0.001;
+    const f = (d - REST_LEN) * SPRING_K * springAlpha;
+    const fx = (f * dx) / d;
+    const fy = (f * dy) / d;
+    nodes[i].vx += fx;
+    nodes[i].vy += fy;
+    nodes[j].vx -= fx;
+    nodes[j].vy -= fy;
+  }
+
+  // Per-node: center gravity, boundary, damping, integrate
+  for (let i = 0; i < n; i++) {
+    if (s.dragNodeIdx === i) continue;
+    const node = nodes[i];
+
+    // Soft center gravity
+    node.vx -= node.x * CENTER_K * Math.max(alpha, 0.05);
+    node.vy -= node.y * CENTER_K * Math.max(alpha, 0.05);
+
+    // Elastic boundary
+    const r = Math.sqrt(node.x * node.x + node.y * node.y);
+    if (r > BOUNDARY) {
+      const overflow = r - BOUNDARY;
+      const pushF = overflow * 0.08;
+      node.vx -= (pushF * node.x) / r;
+      node.vy -= (pushF * node.y) / r;
+    }
+
+    // Damping + clamp velocity
+    node.vx *= DAMPING;
+    node.vy *= DAMPING;
+    const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+    if (speed > MAX_VEL) {
+      node.vx = (node.vx / speed) * MAX_VEL;
+      node.vy = (node.vy / speed) * MAX_VEL;
+    }
+
+    node.x += node.vx;
+    node.y += node.vy;
+  }
+
+  // Cool the simulation (but keep a minimum so it stays alive)
+  if (s.alpha > 0.005) s.alpha -= 0.004;
+  else s.alpha = 0.005;
+}
+
+function renderSim(s: SimState, canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const cw = canvas.offsetWidth;
+  const ch = canvas.offsetHeight;
+
+  if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) {
+    canvas.width = Math.round(cw * dpr);
+    canvas.height = Math.round(ch * dpr);
+    ctx.scale(dpr, dpr);
+  }
+
+  // Background
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, cw, ch);
+
+  ctx.save();
+  ctx.translate(s.panX, s.panY);
+  ctx.scale(s.scale, s.scale);
+
+  // Edges
+  ctx.strokeStyle = "rgba(255,255,255,0.07)";
+  ctx.lineWidth = 0.6 / s.scale;
+  ctx.beginPath();
+  for (const [i, j] of s.edges) {
+    ctx.moveTo(s.nodes[i].x, s.nodes[i].y);
+    ctx.lineTo(s.nodes[j].x, s.nodes[j].y);
+  }
+  ctx.stroke();
+
+  // Nodes
+  for (const node of s.nodes) {
+    const { x, y, radius, glowColor } = node;
+
+    // Glow halo
+    ctx.shadowBlur = 14 / s.scale;
+    ctx.shadowColor = glowColor;
+    ctx.fillStyle = "rgba(255,255,255,0.88)";
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Layer cluster labels
+  ctx.textAlign = "center";
+  ctx.fillStyle = "rgba(255,255,255,0.22)";
+  const labelSize = Math.max(9, 11 / s.scale);
+  ctx.font = `500 ${labelSize}px system-ui, sans-serif`;
+  for (const label of s.layerLabels) {
+    ctx.fillText(label.name.toUpperCase(), label.x, label.y);
+  }
+
+  ctx.restore();
+}
+
+// ─── Hit testing ─────────────────────────────────────────────────────────────
+
+function hitTest(s: SimState, screenX: number, screenY: number): number {
+  const wx = (screenX - s.panX) / s.scale;
+  const wy = (screenY - s.panY) / s.scale;
+  const HIT_RADIUS = 12 / s.scale;
+  for (let i = 0; i < s.nodes.length; i++) {
+    const dx = s.nodes[i].x - wx;
+    const dy = s.nodes[i].y - wy;
+    if (dx * dx + dy * dy < HIT_RADIUS * HIT_RADIUS) return i;
+  }
+  return -1;
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export function EcosystemGraph({ layers }: { layers: Layer[] }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const simRef = useRef<SimState | null>(null);
+  const rafRef = useRef<number>(0);
+  const [selected, setSelected] = useState<{ company: Company; layerId: string } | null>(null);
+
+  // Init + animation loop
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const w = canvas.offsetWidth || window.innerWidth;
+    const h = canvas.offsetHeight || window.innerHeight - 64;
+    simRef.current = initSim(layers, w, h);
+
+    const loop = () => {
+      if (simRef.current) {
+        tickSim(simRef.current);
+        renderSim(simRef.current, canvas);
+      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [layers]);
+
+  // Canvas resize
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const obs = new ResizeObserver(() => {
+      if (!simRef.current) return;
+      simRef.current.width = canvas.offsetWidth;
+      simRef.current.height = canvas.offsetHeight;
+      simRef.current.panX = canvas.offsetWidth / 2;
+      simRef.current.panY = canvas.offsetHeight / 2;
+    });
+    obs.observe(canvas);
+    return () => obs.disconnect();
+  }, []);
+
+  // Mouse: pan + node drag
+  const onMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!simRef.current) return;
+    const s = simRef.current;
+    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+    const sx = e.clientX - rect.left;
+    const sy = e.clientY - rect.top;
+    const idx = hitTest(s, sx, sy);
+    if (idx >= 0) {
+      s.dragNodeIdx = idx;
+    } else {
+      s.isPanning = true;
+      s.panStartX = e.clientX - s.panX;
+      s.panStartY = e.clientY - s.panY;
+    }
+    // Track initial position for click-vs-drag detection
+    s.lastMouseX = e.clientX;
+    s.lastMouseY = e.clientY;
+    s.dragStartX = e.clientX;
+    s.dragStartY = e.clientY;
+  }, []);
+
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!simRef.current) return;
+    const s = simRef.current;
+    if (s.isPanning) {
+      s.panX = e.clientX - s.panStartX;
+      s.panY = e.clientY - s.panStartY;
+    } else if (s.dragNodeIdx !== null) {
+      const dx = (e.clientX - s.lastMouseX) / s.scale;
+      const dy = (e.clientY - s.lastMouseY) / s.scale;
+      s.nodes[s.dragNodeIdx].x += dx;
+      s.nodes[s.dragNodeIdx].y += dy;
+      s.nodes[s.dragNodeIdx].vx = dx * 2;
+      s.nodes[s.dragNodeIdx].vy = dy * 2;
+      s.alpha = Math.max(s.alpha, 0.3);
+    }
+    s.lastMouseX = e.clientX;
+    s.lastMouseY = e.clientY;
+  }, []);
+
+  const onMouseUp = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!simRef.current) return;
+      const s = simRef.current;
+      // Use dragStart (mousedown position) to distinguish click from drag
+      const didntMove =
+        Math.abs(e.clientX - s.dragStartX) < 5 &&
+        Math.abs(e.clientY - s.dragStartY) < 5;
+      if (didntMove && s.dragNodeIdx === null) {
+        const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+        const idx = hitTest(s, e.clientX - rect.left, e.clientY - rect.top);
+        if (idx >= 0) {
+          const node = s.nodes[idx];
+          setSelected({ company: node.company, layerId: node.layerId });
+        } else {
+          setSelected(null);
+        }
+      }
+      s.isPanning = false;
+      s.dragNodeIdx = null;
+    },
+    [],
+  );
+
+  const onWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
+    if (!simRef.current) return;
+    const s = simRef.current;
+    const factor = e.deltaY > 0 ? 0.92 : 1.08;
+    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const wx = (mx - s.panX) / s.scale;
+    const wy = (my - s.panY) / s.scale;
+    s.scale = Math.max(0.3, Math.min(4, s.scale * factor));
+    s.panX = mx - wx * s.scale;
+    s.panY = my - wy * s.scale;
+  }, []);
+
+  const resetView = useCallback(() => {
+    if (!simRef.current) return;
+    const s = simRef.current;
+    s.panX = s.width / 2;
+    s.panY = s.height / 2;
+    s.scale = 1;
+  }, []);
+
+  const accent = selected
+    ? (LAYER_ACCENTS[selected.layerId] ?? LAYER_ACCENTS.infrastructure)
+    : null;
+
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-black">
+      <canvas
+        ref={canvasRef}
+        className="h-full w-full cursor-grab active:cursor-grabbing"
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
+        onWheel={onWheel}
+      />
+
+      {/* Layer legend */}
+      <div className="pointer-events-none absolute left-4 top-4 flex flex-col gap-1.5">
+        {layers.map((layer) => {
+          const a = LAYER_ACCENTS[layer.id] ?? LAYER_ACCENTS.infrastructure;
+          return (
+            <div key={layer.id} className="flex items-center gap-2 text-xs text-zinc-500">
+              <span
+                className={`h-2 w-2 rounded-full bg-gradient-to-r ${a.from} ${a.to}`}
+              />
+              {layer.name}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Controls */}
+      <div className="absolute bottom-4 left-4 flex gap-2">
+        <button
+          type="button"
+          onClick={resetView}
+          className="rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-xs text-zinc-400 backdrop-blur-sm transition hover:border-white/20 hover:text-zinc-200"
+        >
+          Reset view
+        </button>
+        <span className="rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 text-xs text-zinc-600 backdrop-blur-sm">
+          Scroll to zoom · Drag to pan
+        </span>
+      </div>
+
+      {/* Info card */}
+      {selected && accent && (
+        <CompanyInfoCard
+          company={selected.company}
+          layerId={selected.layerId}
+          onClose={() => setSelected(null)}
+        />
+      )}
+>>>>>>> 27c4452 (Add force-directed graph, location map, and company info card system.)
     </div>
   );
 }
