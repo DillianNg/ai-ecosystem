@@ -7,6 +7,11 @@ export interface Company {
   founded: number;
   website: string;
   category: string;
+  // Phase 1 extensions
+  layers: string[];       // multiple layers
+  approaches?: string[];  // approaches this company is relevant to
+  connections?: string[]; // related company IDs
+  tags?: string[];        // free-form tags
   social?: {
     twitter?: string;
     linkedin?: string;

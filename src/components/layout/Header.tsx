@@ -21,6 +21,7 @@ export function Header() {
 
         <nav className="flex items-center gap-1 sm:gap-2">
           <NavLink href="/">Home</NavLink>
+          <NavLink href="/explorer/">Explorer</NavLink>
           <NavLink href="/heatmap/">Heatmap</NavLink>
           <button
             type="button"

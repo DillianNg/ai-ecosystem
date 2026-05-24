@@ -27,7 +27,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=NVIDIA",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=NVIDIA"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Semiconductors",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "amd",
@@ -41,7 +53,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=AMD",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AMD"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Semiconductors",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "coreweave",
@@ -55,7 +79,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=CoreWeave",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=CoreWeave"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Cloud",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "lambda",
@@ -69,7 +105,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Lambda",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Lambda"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Cloud",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "cerebras",
@@ -83,7 +131,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Cerebras",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cerebras"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Chips",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "groq",
@@ -97,7 +157,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Groq",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Groq"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Chips",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "aws",
@@ -111,7 +183,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=AWS",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AWS"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Cloud",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "google-cloud",
@@ -125,7 +209,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Google%20Cloud",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Google%20Cloud"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Cloud",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "azure",
@@ -139,7 +235,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Microsoft%20Azure",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Microsoft%20Azure"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Cloud",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "databricks",
@@ -153,7 +261,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Databricks",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Databricks"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Platform",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "snowflake",
@@ -167,7 +287,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Snowflake",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Snowflake"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Data",
+            "infrastructure"
+          ],
+          "connections": []
         },
         {
           "id": "nebius",
@@ -181,7 +313,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Nebius",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Nebius"
-          }
+          },
+          "layers": [
+            "infrastructure"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data"
+          ],
+          "tags": [
+            "Cloud",
+            "infrastructure"
+          ],
+          "connections": []
         }
       ],
       "news": [
@@ -239,7 +383,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=OpenAI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=OpenAI"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "anthropic",
@@ -253,7 +410,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Anthropic",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Anthropic"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "google-deepmind",
@@ -267,7 +437,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Google%20DeepMind",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Google%20DeepMind"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "meta-ai",
@@ -281,7 +464,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Meta%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Meta%20AI"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Open Weights",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "mistral",
@@ -295,7 +491,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Mistral%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Mistral%20AI"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "cohere",
@@ -309,7 +518,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Cohere",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cohere"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Enterprise",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "ai21",
@@ -323,7 +545,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=AI21%20Labs",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AI21%20Labs"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "stability",
@@ -337,7 +572,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Stability%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Stability%20AI"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Multimodal",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "inflection",
@@ -351,7 +599,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Inflection%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Inflection%20AI"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Consumer",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "xai",
@@ -365,7 +626,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=xAI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=xAI"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "perplexity",
@@ -379,7 +653,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Perplexity",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Perplexity"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Search",
+            "model"
+          ],
+          "connections": []
         },
         {
           "id": "aleph-alpha",
@@ -393,7 +680,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Aleph%20Alpha",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Aleph%20Alpha"
-          }
+          },
+          "layers": [
+            "model"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Foundation",
+            "model"
+          ],
+          "connections": []
         }
       ],
       "news": [
@@ -451,7 +751,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Harvey",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Harvey"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Legal",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "runway",
@@ -465,7 +777,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Runway",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Runway"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Creative",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "character-ai",
@@ -479,7 +803,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Character.AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Character.AI"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Consumer",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "jasper",
@@ -493,7 +829,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Jasper",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Jasper"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Marketing",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "notion-ai",
@@ -507,7 +855,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Notion%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Notion%20AI"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Productivity",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "github-copilot",
@@ -521,7 +881,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=GitHub%20Copilot",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=GitHub%20Copilot"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "DevTools",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "cursor",
@@ -535,7 +907,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Cursor",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cursor"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "DevTools",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "sierra",
@@ -549,7 +933,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Sierra",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Sierra"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Enterprise",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "glean",
@@ -563,7 +959,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Glean",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Glean"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Enterprise",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "adept",
@@ -577,7 +985,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Adept",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Adept"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Automation",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "synthesia",
@@ -591,7 +1011,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Synthesia",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Synthesia"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Video",
+            "application"
+          ],
+          "connections": []
         },
         {
           "id": "hebbia",
@@ -605,7 +1037,19 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Hebbia",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Hebbia"
-          }
+          },
+          "layers": [
+            "application"
+          ],
+          "approaches": [
+            "value-chain",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Finance",
+            "application"
+          ],
+          "connections": []
         }
       ],
       "news": [
@@ -663,7 +1107,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=LangChain",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=LangChain"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Orchestration",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "huggingface",
@@ -677,7 +1134,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Hugging%20Face",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Hugging%20Face"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Platform",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "wandb",
@@ -691,7 +1161,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Weights%20%26%20Biases",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Weights%20%26%20Biases"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "MLOps",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "pinecone",
@@ -705,7 +1188,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Pinecone",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Pinecone"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Vector DB",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "weaviate",
@@ -719,7 +1215,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Weaviate",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Weaviate"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Vector DB",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "arize",
@@ -733,7 +1242,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Arize%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Arize%20AI"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Observability",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "humanloop",
@@ -747,7 +1269,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Humanloop",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Humanloop"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Prompting",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "unstructured",
@@ -761,7 +1296,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Unstructured",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Unstructured"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Data",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "modal",
@@ -775,7 +1323,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Modal",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Modal"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Compute",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "replicate",
@@ -789,7 +1350,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Replicate",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Replicate"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Inference",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "anyscale",
@@ -803,7 +1377,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Anyscale",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Anyscale"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Runtime",
+            "integration"
+          ],
+          "connections": []
         },
         {
           "id": "mlflow",
@@ -817,7 +1404,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=MLflow",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=MLflow"
-          }
+          },
+          "layers": [
+            "integration"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "MLOps",
+            "integration"
+          ],
+          "connections": []
         }
       ],
       "news": [
@@ -875,7 +1475,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Robust%20Intelligence",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Robust%20Intelligence"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Model Security",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "hiddenlayer",
@@ -889,7 +1502,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Hidden%20Layer",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Hidden%20Layer"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "MLSec",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "lakera",
@@ -903,7 +1529,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Lakera",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Lakera"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Guardrails",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "calypsoai",
@@ -917,7 +1556,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=CalypsoAI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=CalypsoAI"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Gateway",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "cranium",
@@ -931,7 +1583,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Cranium",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Cranium"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "GRC",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "protect-ai",
@@ -945,7 +1610,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Protect%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Protect%20AI"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "MLSOC",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "witnessai",
@@ -959,7 +1637,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=WitnessAI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=WitnessAI"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Monitoring",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "aim-security",
@@ -973,7 +1664,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=AIM%20Security",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=AIM%20Security"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Governance",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "nightfall",
@@ -987,7 +1691,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Nightfall%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Nightfall%20AI"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "DLP",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "openai-safety",
@@ -1001,7 +1718,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=OpenAI%20Safety",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=OpenAI%20Safety"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Research",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "anthropic-safety",
@@ -1015,7 +1745,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Anthropic%20Safety",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Anthropic%20Safety"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Research",
+            "security"
+          ],
+          "connections": []
         },
         {
           "id": "crowdstrike",
@@ -1029,7 +1772,20 @@
           "social": {
             "twitter": "https://twitter.com/search?q=CrowdStrike",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=CrowdStrike"
-          }
+          },
+          "layers": [
+            "security"
+          ],
+          "approaches": [
+            "value-chain",
+            "infrastructure-data",
+            "human-in-loop"
+          ],
+          "tags": [
+            "Cyber",
+            "security"
+          ],
+          "connections": []
         }
       ],
       "news": [
@@ -1087,7 +1843,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Scale%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Scale%20AI"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Data",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "surge-ai",
@@ -1101,7 +1868,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Surge%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Surge%20AI"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Data",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "labelbox",
@@ -1115,7 +1893,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Labelbox",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Labelbox"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Data",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "stripe",
@@ -1129,7 +1918,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Stripe",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Stripe"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Payments",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "openrouter",
@@ -1143,7 +1943,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=OpenRouter",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=OpenRouter"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Marketplace",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "revenuecat",
@@ -1157,7 +1968,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=RevenueCat",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=RevenueCat"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Billing",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "paddle",
@@ -1171,7 +1993,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Paddle",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Paddle"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Billing",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "datarobot",
@@ -1185,7 +2018,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=DataRobot",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=DataRobot"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Analytics",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "helicone",
@@ -1199,7 +2043,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Helicone",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Helicone"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "FinOps",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "langfuse",
@@ -1213,7 +2068,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Langfuse",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Langfuse"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Analytics",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "predibase",
@@ -1227,7 +2093,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Predibase",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Predibase"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Serving",
+            "monetization"
+          ],
+          "connections": []
         },
         {
           "id": "together",
@@ -1241,7 +2118,18 @@
           "social": {
             "twitter": "https://twitter.com/search?q=Together%20AI",
             "linkedin": "https://www.linkedin.com/search/results/companies/?keywords=Together%20AI"
-          }
+          },
+          "layers": [
+            "monetization"
+          ],
+          "approaches": [
+            "value-chain"
+          ],
+          "tags": [
+            "Marketplace",
+            "monetization"
+          ],
+          "connections": []
         }
       ],
       "news": [
