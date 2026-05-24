@@ -1,134 +1,261 @@
 #!/usr/bin/env node
 
-import { mkdirSync, readFileSync, writeFileSync } from "fs";
-import { dirname } from "path";
-import { AUDIT_PATH, CSV_PATH, OUTPUT_PATH } from "./lib/paths.mjs";
-import { parseCsv } from "./lib/csv-parser.mjs";
-import { resolveAuditConfig } from "./lib/audit-config.mjs";
-import { validateRow } from "./lib/validate.mjs";
-import { dedupeById } from "./lib/dedupe.mjs";
-import { transformRow, buildFrontendOutput } from "./lib/transform.mjs";
-import { normalizeSlug } from "./lib/normalize.mjs";
+/**
+ * CSV → ecosystem.json pipeline
+ * Makes data/companies.csv the SINGLE SOURCE OF TRUTH.
+ * Outputs: src/data/ecosystem.json + public/data.json
+ */
 
-function loadAudit() {
-  try {
-    const raw = readFileSync(AUDIT_PATH, "utf8");
-    if (!raw.trim()) return {};
-    return JSON.parse(raw);
-  } catch (error) {
-    if (error.code === "ENOENT") return {};
-    throw new Error(`Failed to parse ${AUDIT_PATH}: ${error.message}`);
+import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(__dirname, "..");
+const CSV_PATH = join(ROOT, "data/companies.csv");
+const ECOSYSTEM_OUT = join(ROOT, "src/data/ecosystem.json");
+const PUBLIC_OUT = join(ROOT, "public/data.json");
+const GENERATED_OUT = join(ROOT, "data/generated/companies.json");
+
+// ── Category → Layer mapping ──
+const CATEGORY_TO_LAYER = {
+  hardware:        "infrastructure",
+  infrastructure:  "infrastructure",
+  foundation_model:"model",
+  research:        "model",
+  applications:    "application",
+  agent_framework: "application",
+  developer_tools: "integration",
+  data_platform:   "monetization",
+  safety:          "security",
+};
+
+// ── Layer metadata (preserved from existing) ──
+const LAYER_META = {
+  infrastructure: {
+    name: "Infrastructure",
+    description: "Hardware, cloud, and compute platforms powering AI workloads.",
+    fullDescription: "GPU/TPU silicon, hyperscale clouds, networking, and storage systems that form the physical substrate of AI.",
+    fundingStatus: "$124B", fundingPercent: 85, companyCount: 0, growthTrend: 42,
+  },
+  model: {
+    name: "Model",
+    description: "Foundation models, research labs, and model training.",
+    fullDescription: "Organizations building and training frontier language, vision, and multimodal models.",
+    fundingStatus: "$89B", fundingPercent: 72, companyCount: 0, growthTrend: 68,
+  },
+  application: {
+    name: "Application",
+    description: "AI-powered products and vertical applications.",
+    fullDescription: "Companies applying AI to specific domains: code, creative, legal, healthcare, agents, and consumer products.",
+    fundingStatus: "$45B", fundingPercent: 55, companyCount: 0, growthTrend: 85,
+  },
+  integration: {
+    name: "Integration",
+    description: "Developer tools, orchestration, data platforms, and MLOps.",
+    fullDescription: "Frameworks, vector DBs, labeling, experiment tracking, and the connective tissue of AI systems.",
+    fundingStatus: "$28B", fundingPercent: 48, companyCount: 0, growthTrend: 62,
+  },
+  security: {
+    name: "Security",
+    description: "AI safety, alignment research, and guardrails.",
+    fullDescription: "Organizations focused on making AI systems safe, interpretable, and aligned with human values.",
+    fundingStatus: "$5B", fundingPercent: 22, companyCount: 0, growthTrend: 120,
+  },
+  monetization: {
+    name: "Monetization",
+    description: "Data labeling, marketplace, and AI business models.",
+    fullDescription: "Platforms converting AI capability into revenue through data, marketplaces, and novel business models.",
+    fundingStatus: "$12B", fundingPercent: 35, companyCount: 0, growthTrend: 55,
+  },
+};
+
+// ── Approach mapping by layer ──
+const LAYER_APPROACHES = {
+  infrastructure: ["value-chain", "infrastructure-data"],
+  model:          ["value-chain", "infrastructure-data", "human-in-loop"],
+  application:    ["value-chain", "human-in-loop"],
+  integration:    ["value-chain", "infrastructure-data", "human-in-loop"],
+  security:       ["value-chain", "infrastructure-data", "human-in-loop"],
+  monetization:   ["value-chain"],
+};
+
+// ── CSV Parser ──
+function parseCsv(text) {
+  const content = text.replace(/^\uFEFF/, "");
+  if (!content.trim()) return [];
+  const rows = []; let row = []; let field = ""; let inQ = false;
+  for (let i = 0; i < content.length; i++) {
+    const c = content[i];
+    if (inQ) {
+      if (c === '"') { if (content[i+1] === '"') { field += '"'; i++; } else inQ = false; }
+      else field += c;
+    } else if (c === '"') { inQ = true; }
+    else if (c === ',') { row.push(field); field = ""; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && content[i+1] === '\n') i++;
+      row.push(field); field = "";
+      if (row.some(s => s.trim())) rows.push(row);
+      row = [];
+    } else field += c;
   }
-}
-
-function loadCsv() {
-  try {
-    return readFileSync(CSV_PATH, "utf8");
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      throw new Error(`Missing CSV file: ${CSV_PATH}`);
-    }
-    throw error;
-  }
-}
-
-function normalizeHeaderKeys(row) {
-  const normalized = {};
-  for (const [key, value] of Object.entries(row)) {
-    const k = key.trim().toLowerCase().replace(/\s+/g, "_");
-    normalized[k] = value;
-    if (k === "layer") normalized.layer_id = value;
-    if (k === "logo_url") normalized.logo = value;
-    if (k === "categories" && !normalized.category) normalized.category = value;
-  }
-  if (normalized.id) {
-    normalized.id = normalizeSlug(normalized.id);
-  }
-  return normalized;
-}
-
-function main() {
-  const auditRaw = loadAudit();
-  const config = resolveAuditConfig(auditRaw);
-
-  const csvText = loadCsv();
-  const { headers, rows: rawRows } = parseCsv(csvText);
-
-  if (headers.length === 0 || rawRows.length === 0) {
-    console.warn(`[build-companies] ${CSV_PATH} is empty — writing empty companies.json`);
-    mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
-    writeFileSync(
-      OUTPUT_PATH,
-      JSON.stringify(
-        buildFrontendOutput([], {
-          generatedAt: new Date().toISOString(),
-          source: "data/companies.csv",
-          deduplicatedCount: 0,
-        }),
-        null,
-        2
-      ),
-      "utf8"
-    );
-    return;
-  }
-
-  const rows = rawRows.map(normalizeHeaderKeys);
-  const { rows: dedupedRows, duplicates } = dedupeById(rows);
-
-  const knownIds = new Set(
-    dedupedRows.map((row) => normalizeSlug(row.id ?? "")).filter(Boolean)
-  );
-
-  const allErrors = [];
-  const allWarnings = [];
-
-  dedupedRows.forEach((row, index) => {
-    const rowNumber = index + 2;
-    const { errors, warnings } = validateRow(row, rowNumber, config, knownIds);
-    allErrors.push(...errors);
-    allWarnings.push(...warnings);
+  if (field || row.length) { row.push(field); if (row.some(s => s.trim())) rows.push(row); }
+  if (rows.length < 2) return [];
+  const headers = rows[0].map(h => h.trim());
+  return rows.slice(1).map(cells => {
+    const rec = {};
+    headers.forEach((h, i) => { rec[h] = (cells[i] ?? "").trim(); });
+    return rec;
   });
+}
 
-  if (allErrors.length > 0) {
-    console.error("[build-companies] Validation failed:");
-    for (const err of allErrors) {
-      console.error(`  row ${err.row} · ${err.field}: ${err.message}`);
-    }
+// ── Slug generator ──
+function toSlug(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+// ── Logo resolver ──
+function resolveLogo(row) {
+  // 1. Explicit logo_url from CSV
+  if (row.logo_url && row.logo_url !== "N/A") return row.logo_url;
+  // 2. Clearbit from website domain
+  if (row.website) {
+    try {
+      const domain = new URL(row.website.startsWith("http") ? row.website : `https://${row.website}`).hostname;
+      return `https://logo.clearbit.com/${domain}`;
+    } catch {}
+  }
+  // 3. UI Avatars fallback
+  const name = row.company_name || row.name || "?";
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1a1a1a&color=fff&size=128`;
+}
+
+// ── Split pipe-delimited ──
+function splitPipes(s) {
+  return (s || "").split("|").map(x => x.trim()).filter(Boolean);
+}
+
+// ── Transform CSV row → Company ──
+function transformRow(row) {
+  const slug = row.slug || toSlug(row.company_name || row.name || "");
+  const primaryCat = (row.primary_category || "").trim();
+  const layerId = CATEGORY_TO_LAYER[primaryCat] || "application";
+  const subCats = splitPipes(row.sub_categories);
+  const tags = [primaryCat, ...subCats].filter(Boolean);
+
+  // Build connections from CSV relationship columns
+  const connections = [
+    ...splitPipes(row.partnerships),
+    ...splitPipes(row.integrations),
+    ...splitPipes(row.competitors),
+  ].filter(Boolean);
+
+  const social = {};
+  if (row.twitter_url) social.twitter = row.twitter_url;
+  if (row.linkedin_url) social.linkedin = row.linkedin_url;
+  if (row.github_url) social.github = row.github_url;
+
+  const founded = parseInt(row.founded_year, 10);
+
+  return {
+    id: slug,
+    name: row.company_name || row.name || "",
+    logo: resolveLogo(row),
+    description: row.description_en || row.description || "",
+    valuation: row.total_funding_usd
+      ? `$${(parseInt(row.total_funding_usd, 10) / 1e9).toFixed(1)}B`
+      : "N/A",
+    founded: isFinite(founded) ? founded : null,
+    website: row.website || "",
+    category: primaryCat.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
+    layers: [layerId],
+    approaches: LAYER_APPROACHES[layerId] || ["value-chain"],
+    connections,
+    tags,
+    social: Object.keys(social).length > 0 ? social : undefined,
+    // Extra rich fields
+    products: splitPipes(row.products),
+    fundingStage: row.funding_stage || "",
+    employees: row.employees_range || "",
+    headquarters: [row.headquarters_city, row.headquarters_country].filter(Boolean).join(", "),
+  };
+}
+
+// ── Main ──
+function main() {
+  const csvText = readFileSync(CSV_PATH, "utf8");
+  const rows = parseCsv(csvText);
+
+  if (rows.length === 0) {
+    console.error("[build-companies] CSV is empty or unreadable");
     process.exit(1);
   }
 
-  if (allWarnings.length > 0) {
-    console.warn(`[build-companies] ${allWarnings.length} warning(s):`);
-    for (const warn of allWarnings.slice(0, 20)) {
-      console.warn(`  row ${warn.row} · ${warn.field}: ${warn.message}`);
-    }
-    if (allWarnings.length > 20) {
-      console.warn(`  … and ${allWarnings.length - 20} more`);
-    }
+  console.log(`[build-companies] Parsed ${rows.length} rows from CSV`);
+
+  // Dedupe by slug
+  const seen = new Set();
+  const companies = [];
+  for (const row of rows) {
+    const c = transformRow(row);
+    if (!c.id || seen.has(c.id)) continue;
+    seen.add(c.id);
+    companies.push(c);
   }
 
-  const companies = dedupedRows
-    .map((row) => transformRow(row, config, knownIds))
-    .filter((company) => company.id && company.name);
+  console.log(`[build-companies] ${companies.length} unique companies after dedup`);
 
-  const output = buildFrontendOutput(companies, {
-    generatedAt: new Date().toISOString(),
-    source: "data/companies.csv",
-    deduplicatedCount: duplicates.length,
-    validation: {
-      warnings: allWarnings.length,
-      auditIssuesRecorded: auditRaw?.summary?.total_issues ?? null,
-    },
+  // Group by layer
+  const layerMap = {};
+  for (const c of companies) {
+    const lid = c.layers[0];
+    if (!layerMap[lid]) layerMap[lid] = [];
+    layerMap[lid].push(c);
+  }
+
+  // Build ecosystem.json structure
+  const layerOrder = ["infrastructure", "model", "application", "integration", "security", "monetization"];
+  const layers = layerOrder.map(lid => {
+    const meta = LAYER_META[lid] || LAYER_META.application;
+    const layerCompanies = (layerMap[lid] || []).sort((a, b) => a.name.localeCompare(b.name));
+    return {
+      id: lid,
+      name: meta.name,
+      description: meta.description,
+      fullDescription: meta.fullDescription,
+      fundingStatus: meta.fundingStatus,
+      fundingPercent: meta.fundingPercent,
+      companyCount: layerCompanies.length,
+      growthTrend: meta.growthTrend,
+      companies: layerCompanies,
+      news: [],
+    };
   });
 
-  mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
-  writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2), "utf8");
+  const ecosystem = {
+    meta: {
+      title: "AI Ecosystem Map",
+      description: "Interactive mapping of the AI technology stack.",
+      lastUpdated: new Date().toISOString().split("T")[0],
+    },
+    layers,
+  };
 
-  console.log(
-    `[build-companies] Wrote ${companies.length} companies → ${OUTPUT_PATH}` +
-      (duplicates.length ? ` (removed ${duplicates.length} duplicate id(s))` : "")
-  );
+  // Write outputs
+  writeFileSync(ECOSYSTEM_OUT, JSON.stringify(ecosystem, null, 2), "utf8");
+  writeFileSync(PUBLIC_OUT, JSON.stringify(ecosystem, null, 2), "utf8");
+  mkdirSync(dirname(GENERATED_OUT), { recursive: true });
+  writeFileSync(GENERATED_OUT, JSON.stringify({
+    meta: { generatedAt: new Date().toISOString(), source: "data/companies.csv", totalCompanies: companies.length },
+    companies,
+    byLayer: layerMap,
+  }, null, 2), "utf8");
+
+  // Summary
+  for (const l of layers) {
+    console.log(`  ${l.id}: ${l.companyCount} companies`);
+  }
+  console.log(`[build-companies] Done. Wrote ecosystem.json + data.json`);
 }
 
 main();

@@ -9,7 +9,8 @@
     "lint": "eslint",
     "generate-data": "node scripts/generate-data.mjs",
     "build:data": "node scripts/build-companies.mjs",
-    "postbuild": "cp public/.nojekyll out/.nojekyll 2>/dev/null || touch out/.nojekyll"
+    "postbuild": "cp public/.nojekyll out/.nojekyll 2>/dev/null || touch out/.nojekyll",
+    "prebuild": "node scripts/build-companies.mjs"
   },
   "dependencies": {
     "@types/d3-force": "^3.0.10",

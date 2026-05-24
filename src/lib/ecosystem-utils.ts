@@ -1,7 +1,7 @@
 import type { Company, Layer } from "@/types/ecosystem";
 import { getBundledData } from "@/lib/data";
 
-/** Return all companies across all layers, deduplicated by id */
+/** All companies across all layers, deduplicated by id */
 export function getAllCompanies(): Company[] {
   const { layers } = getBundledData();
   const seen = new Set<string>();
@@ -10,35 +10,29 @@ export function getAllCompanies(): Company[] {
     for (const company of layer.companies) {
       if (!seen.has(company.id)) {
         seen.add(company.id);
-        // ensure layers array is populated
-        const enriched: Company = {
+        result.push({
           ...company,
           layers: company.layers?.length ? company.layers : [layer.id],
-        };
-        result.push(enriched);
+        });
       }
     }
   }
   return result;
 }
 
-/** Filter companies by a specific approach id */
 export function filterByApproach(approach: string): Company[] {
-  const companies = getAllCompanies();
-  if (!approach || approach === "all") return companies;
-  return companies.filter(
-    (c) => c.approaches?.includes(approach) ?? false,
-  );
+  const all = getAllCompanies();
+  if (!approach || approach === "all") return all;
+  return all.filter(c => c.approaches?.includes(approach));
 }
 
-/** Filter companies by a specific layer id */
 export function filterByLayer(layerId: string): Company[] {
-  const companies = getAllCompanies();
-  if (!layerId || layerId === "all") return companies;
-  return companies.filter((c) => c.layers?.includes(layerId));
+  const all = getAllCompanies();
+  if (!layerId || layerId === "all") return all;
+  return all.filter(c => c.layers?.includes(layerId));
 }
 
-/** Build graph relationships: nodes and edges for the node graph */
+/* ── Graph data types ── */
 export interface GraphNode {
   id: string;
   type: "company" | "layer";
@@ -55,6 +49,7 @@ export interface GraphEdge {
   target: string;
 }
 
+/** Build graph nodes + edges from layers, optionally filtered by approach */
 export function buildGraphData(
   layers: Layer[],
   filterApproach?: string,
@@ -63,7 +58,7 @@ export function buildGraphData(
   const edges: GraphEdge[] = [];
   const seenCompanies = new Set<string>();
 
-  // add layer nodes
+  // Layer hub nodes
   for (const layer of layers) {
     nodes.push({
       id: `layer-${layer.id}`,
@@ -73,41 +68,29 @@ export function buildGraphData(
     });
   }
 
-  // add company nodes + edges
+  // Company nodes + edges
   for (const layer of layers) {
     for (const company of layer.companies) {
-      // approach filter
       if (
-        filterApproach &&
-        filterApproach !== "all" &&
-        company.approaches &&
-        !company.approaches.includes(filterApproach)
-      ) {
-        continue;
-      }
+        filterApproach && filterApproach !== "all" &&
+        company.approaches && !company.approaches.includes(filterApproach)
+      ) continue;
 
       if (!seenCompanies.has(company.id)) {
         seenCompanies.add(company.id);
-        const companyLayers = company.layers?.length
-          ? company.layers
-          : [layer.id];
+        const valStr = company.valuation;
         nodes.push({
           id: company.id,
           type: "company",
           label: company.name,
-          layerIds: companyLayers,
+          layerIds: company.layers?.length ? company.layers : [layer.id],
           category: company.category,
-          valuation: company.valuation,
+          valuation: valStr,
           website: company.website,
           logo: company.logo,
         });
       }
-
-      // edge: company -> layer
-      edges.push({
-        source: company.id,
-        target: `layer-${layer.id}`,
-      });
+      edges.push({ source: company.id, target: `layer-${layer.id}` });
     }
   }
 

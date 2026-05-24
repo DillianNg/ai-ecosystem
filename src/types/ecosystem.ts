@@ -4,14 +4,17 @@ export interface Company {
   logo: string;
   description: string;
   valuation: string;
-  founded: number;
+  founded: number | null;
   website: string;
   category: string;
-  // Phase 1 extensions
-  layers: string[];       // multiple layers
-  approaches?: string[];  // approaches this company is relevant to
-  connections?: string[]; // related company IDs
-  tags?: string[];        // free-form tags
+  layers: string[];
+  approaches?: string[];
+  connections?: string[];
+  tags?: string[];
+  products?: string[];
+  fundingStage?: string;
+  employees?: string;
+  headquarters?: string;
   social?: {
     twitter?: string;
     linkedin?: string;
