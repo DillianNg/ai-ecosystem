@@ -6,18 +6,14 @@ import type { Layer } from "@/types/ecosystem";
 import { buildGraphData } from "@/lib/ecosystem-utils";
 import { EcosystemGraph } from "@/components/graph/EcosystemGraph";
 
-interface EcosystemGraphSectionProps {
-  layers: Layer[];
-}
-
 const APPROACHES = [
-  { id: "all", label: "All Companies" },
-  { id: "value-chain", label: "Value Chain" },
-  { id: "infrastructure-data", label: "Infra vs Data" },
-  { id: "human-in-loop", label: "Human-in-Loop" },
+  { id: "all",                label: "All" },
+  { id: "value-chain",        label: "Value Chain" },
+  { id: "infrastructure-data",label: "Infra vs Data" },
+  { id: "human-in-loop",      label: "Human-in-Loop" },
 ];
 
-export function EcosystemGraphSection({ layers }: EcosystemGraphSectionProps) {
+export function EcosystemGraphSection({ layers }: { layers: Layer[] }) {
   const [selectedApproach, setSelectedApproach] = useState("all");
 
   const { nodes, edges } = useMemo(
@@ -26,27 +22,28 @@ export function EcosystemGraphSection({ layers }: EcosystemGraphSectionProps) {
   );
 
   return (
-    <section className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <section className="flex flex-col" style={{ height: "calc(100vh - 80px)" }}>
+      {/* Header row */}
+      <div className="mb-6 flex items-end justify-between px-2">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-violet-500">
-            Ecosystem knowledge map
+          <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
+            Ecosystem Knowledge Map
           </p>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            Companies as nodes, layers as hubs. Filter by architecture approach to reconfigure the graph.
+          <p className="mt-1 text-xs text-white/35">
+            {nodes.filter(n => n.type === "company").length} companies across {nodes.filter(n => n.type === "layer").length} layers
           </p>
         </div>
+
         {/* Approach pills */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex gap-3">
           {APPROACHES.map((a) => (
             <button
               key={a.id}
               onClick={() => setSelectedApproach(a.id)}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+              className={`text-xs tracking-wide transition ${
                 selectedApproach === a.id
-                  ? "bg-violet-600 text-white shadow-md shadow-violet-500/30"
-                  : "border border-zinc-200/70 bg-white/60 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-700/70 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  ? "text-white"
+                  : "text-white/25 hover:text-white/60"
               }`}
             >
               {a.label}
@@ -55,26 +52,21 @@ export function EcosystemGraphSection({ layers }: EcosystemGraphSectionProps) {
         </div>
       </div>
 
-      {/* Graph */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={selectedApproach}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <EcosystemGraph
-            nodes={nodes}
-            edges={edges}
-            selectedApproach={selectedApproach}
-          />
-        </motion.div>
-      </AnimatePresence>
-
-      <p className="text-center text-xs text-zinc-400">
-        {nodes.filter((n) => n.type === "company").length} companies across {nodes.filter((n) => n.type === "layer").length} layers
-      </p>
+      {/* Graph canvas — fullscreen */}
+      <div className="flex-1 overflow-hidden rounded-none">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedApproach}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="h-full w-full"
+          >
+            <EcosystemGraph nodes={nodes} edges={edges} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </section>
   );
 }

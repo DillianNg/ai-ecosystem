@@ -1,47 +1,65 @@
-import Link from "next/link";
-import { DashboardView } from "@/components/dashboard/DashboardView";
-import { EcosystemGraphSection } from "@/components/graph/EcosystemGraphSection";
 import { getBundledData } from "@/lib/data";
+import { ParticleField } from "@/components/home/ParticleField";
+import { EcosystemGraphSection } from "@/components/graph/EcosystemGraphSection";
 
 export default function HomePage() {
-  const { meta, layers } = getBundledData();
+  const { layers } = getBundledData();
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* Hero headline section */}
-      <section className="mb-10 text-center sm:text-left">
-        <p className="text-sm font-semibold uppercase tracking-widest text-violet-500">
-          Sequoia-inspired AI stack
-        </p>
-        <h1 className="mt-2 text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-          {meta.title}
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400 sm:mx-0">
-          {meta.description} Explore six layers from infrastructure to monetization, with funding flows, companies, and news.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3 sm:justify-start">
-          <Link
-            href="/explorer/"
-            className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-violet-700"
+    <div className="bg-black">
+      {/* SECTION 1 — HERO */}
+      <section className="snap-section relative flex h-screen w-full items-center justify-center overflow-hidden bg-black">
+        <ParticleField />
+
+        {/* Radial glow */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(120,80,255,0.08) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* Hero text */}
+        <div className="relative z-10 text-center">
+          <p
+            className="mb-6 text-xs font-medium uppercase tracking-[0.4em] text-white/30 animate-fade-in"
+            style={{ animationDelay: "0.2s" }}
           >
-            Company Explorer
-          </Link>
-          <Link
-            href="/heatmap/"
-            className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            Interactive Knowledge Map
+          </p>
+          <h1
+            className="text-[clamp(2.5rem,8vw,7rem)] font-thin leading-none tracking-tight text-white animate-fade-in-up"
+            style={{ animationDelay: "0.4s" }}
           >
-            View heatmap
-          </Link>
+            AI Ecosystem
+            <br />
+            <span className="font-light text-white/60">Mapping</span>
+          </h1>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float">
+          <svg
+            className="h-6 w-6 text-white/30"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
         </div>
       </section>
 
-      {/* Obsidian-style interactive graph */}
-      <div className="mb-16">
+      {/* SECTION 2 — FULLSCREEN GRAPH */}
+      <section className="snap-section relative min-h-screen w-full overflow-hidden bg-black px-4 py-20 sm:px-8">
         <EcosystemGraphSection layers={layers} />
-      </div>
-
-      {/* Architecture approach dashboard (pushed below graph) */}
-      <DashboardView layers={layers} />
+      </section>
     </div>
   );
 }

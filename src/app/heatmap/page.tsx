@@ -11,16 +11,19 @@ export default function HeatmapPage() {
   const { layers } = getBundledData();
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <section className="mb-10">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-4xl">
-          Ecosystem heatmap
+    <div className="min-h-screen bg-black pt-24 pb-20 px-6 sm:px-10 lg:px-16">
+      <div className="mb-12">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-white/25 mb-3">
+          Metrics
+        </p>
+        <h1 className="text-4xl font-thin text-white sm:text-6xl">
+          Heatmap
         </h1>
-        <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
+        <p className="mt-4 max-w-lg text-sm text-white/35">
           Compare funding distribution, company density, and growth trends across all six
           layers. Select a metric and click any cell to drill into layer details.
         </p>
-      </section>
+      </div>
       <HeatmapClient layers={layers} />
     </div>
   );

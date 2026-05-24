@@ -1,458 +1,418 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type { GraphNode, GraphEdge } from "@/lib/ecosystem-utils";
-
 
 interface EcosystemGraphProps {
   nodes: GraphNode[];
   edges: GraphEdge[];
-  selectedApproach?: string;
 }
 
 interface SimNode extends GraphNode {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
+  x: number; y: number;
+  vx: number; vy: number;
   fx?: number | null;
   fy?: number | null;
 }
 
-interface SimEdge {
-  source: SimNode;
-  target: SimNode;
-}
+interface SimEdge { source: SimNode; target: SimNode; }
 
-const LAYER_COLORS: Record<string, string> = {
-  infrastructure: "#38bdf8",
-  model: "#a78bfa",
-  application: "#34d399",
-  integration: "#fbbf24",
-  security: "#f87171",
-  monetization: "#e879f9",
+// Grayscale palette — Obsidian aesthetic
+const LAYER_HUE: Record<string, number> = {
+  infrastructure: 210,
+  model: 270,
+  application: 160,
+  integration: 40,
+  security: 0,
+  monetization: 300,
 };
 
-const LAYER_GLOW: Record<string, string> = {
-  infrastructure: "rgba(56,189,248,0.5)",
-  model: "rgba(167,139,250,0.5)",
-  application: "rgba(52,211,153,0.5)",
-  integration: "rgba(251,191,36,0.5)",
-  security: "rgba(248,113,113,0.5)",
-  monetization: "rgba(232,121,249,0.5)",
-};
-
-function getNodeColor(node: GraphNode): string {
-  const lid = node.layerIds?.[0] ?? "infrastructure";
-  return LAYER_COLORS[lid] ?? "#a78bfa";
+function nodeColor(node: GraphNode, alpha = 1) {
+  const hue = LAYER_HUE[node.layerIds?.[0] ?? "infrastructure"] ?? 270;
+  if (node.type === "layer") return `hsla(${hue},8%,85%,${alpha})`;
+  return `hsla(${hue},5%,65%,${alpha})`;
+}
+function nodeGlow(node: GraphNode) {
+  const hue = LAYER_HUE[node.layerIds?.[0] ?? "infrastructure"] ?? 270;
+  return `hsla(${hue},40%,75%,0.7)`;
+}
+function edgeColor(edge: SimEdge, highlighted: boolean) {
+  if (highlighted) return "rgba(255,255,255,0.35)";
+  return "rgba(255,255,255,0.06)";
 }
 
-function getNodeGlow(node: GraphNode): string {
-  const lid = node.layerIds?.[0] ?? "infrastructure";
-  return LAYER_GLOW[lid] ?? "rgba(167,139,250,0.5)";
-}
-
-export function EcosystemGraph({ nodes, edges, selectedApproach }: EcosystemGraphProps) {
+export function EcosystemGraph({ nodes, edges }: EcosystemGraphProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const simNodesRef = useRef<SimNode[]>([]);
-  const simEdgesRef = useRef<SimEdge[]>([]);
-  const animRef = useRef<number>(0);
-  const [hoveredNode, setHoveredNode] = useState<SimNode | null>(null);
+  const simRef = useRef<{ nodes: SimNode[]; edges: SimEdge[] }>({ nodes: [], edges: [] });
+  const rafRef = useRef<number>(0);
+  const stateRef = useRef({
+    hovered: null as SimNode | null,
+    selected: null as SimNode | null,
+    drag: null as SimNode | null,
+    dragOffset: { x: 0, y: 0 },
+    isPanning: false,
+    panStart: { mx: 0, my: 0, px: 0, py: 0 },
+    pan: { x: 0, y: 0 },
+    scale: 1,
+    hasDragged: false,
+  });
+
   const [selectedNode, setSelectedNode] = useState<SimNode | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragNodeRef = useRef<SimNode | null>(null);
-  const offsetRef = useRef({ x: 0, y: 0 });
-  const panRef = useRef({ x: 0, y: 0 });
-  const panStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
-  const isPanningRef = useRef(false);
-  const scaleRef = useRef(1);
+  const [hovered, setHovered] = useState<SimNode | null>(null);
 
-  const getCanvasCoords = useCallback((e: MouseEvent | Touch, canvas: HTMLCanvasElement) => {
-    const rect = canvas.getBoundingClientRect();
-    const cx = (e.clientX - rect.left - panRef.current.x) / scaleRef.current;
-    const cy = (e.clientY - rect.top - panRef.current.y) / scaleRef.current;
-    return { cx, cy };
-  }, []);
-
-  const findNodeAt = useCallback((cx: number, cy: number): SimNode | null => {
-    for (const node of [...simNodesRef.current].reverse()) {
-      const r = node.type === "layer" ? 32 : 18;
-      const dx = node.x - cx;
-      const dy = node.y - cy;
-      if (dx * dx + dy * dy < r * r) return node;
-    }
-    return null;
-  }, []);
-
-  // Build simulation
+  // Build / rebuild simulation when nodes/edges change
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const W = canvas.width;
     const H = canvas.height;
+    const cx = W / 2, cy = H / 2;
 
-    // Position layer nodes in a ring
     const layerNodes = nodes.filter((n) => n.type === "layer");
-    const companyNodes = nodes.filter((n) => n.type === "company");
+    const compNodes   = nodes.filter((n) => n.type === "company");
 
-    const simNodes: SimNode[] = [];
     const nodeMap = new Map<string, SimNode>();
+    const simNodes: SimNode[] = [];
 
+    // Layer nodes in ring
     layerNodes.forEach((n, i) => {
       const angle = (i / layerNodes.length) * Math.PI * 2 - Math.PI / 2;
-      const radius = Math.min(W, H) * 0.28;
-      const sn: SimNode = {
-        ...n,
-        x: W / 2 + Math.cos(angle) * radius,
-        y: H / 2 + Math.sin(angle) * radius,
-        vx: 0,
-        vy: 0,
-      };
+      const r = Math.min(W, H) * 0.26;
+      const sn: SimNode = { ...n, x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r, vx: 0, vy: 0 };
       simNodes.push(sn);
       nodeMap.set(n.id, sn);
     });
 
-    companyNodes.forEach((n, i) => {
+    // Company nodes scattered
+    compNodes.forEach((n) => {
       const angle = Math.random() * Math.PI * 2;
-      const r = 80 + Math.random() * (Math.min(W, H) * 0.35);
-      const sn: SimNode = {
-        ...n,
-        x: W / 2 + Math.cos(angle) * r,
-        y: H / 2 + Math.sin(angle) * r,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-      };
+      const r = 60 + Math.random() * Math.min(W, H) * 0.32;
+      const sn: SimNode = { ...n, x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r, vx: (Math.random()-0.5)*1.5, vy: (Math.random()-0.5)*1.5 };
       simNodes.push(sn);
       nodeMap.set(n.id, sn);
     });
 
     const simEdges: SimEdge[] = edges
-      .map((e) => ({
-        source: nodeMap.get(e.source)!,
-        target: nodeMap.get(e.target)!,
-      }))
+      .map((e) => ({ source: nodeMap.get(e.source)!, target: nodeMap.get(e.target)! }))
       .filter((e) => e.source && e.target);
 
-    simNodesRef.current = simNodes;
-    simEdgesRef.current = simEdges;
+    simRef.current = { nodes: simNodes, edges: simEdges };
+    // Reset camera
+    stateRef.current.pan = { x: 0, y: 0 };
+    stateRef.current.scale = 1;
   }, [nodes, edges]);
 
-  // Physics + draw loop
+  // Physics + render loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const ctx = canvas.getContext("2d", { alpha: true })!;
 
-    let frame = 0;
+    // Resize canvas
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
 
-    function step() {
-      const sNodes = simNodesRef.current;
-      const sEdges = simEdgesRef.current;
-      const W = canvas!.width;
-      const H = canvas!.height;
-      const cx = W / 2;
-      const cy = H / 2;
+    let alpha = 1; // simulation cooling
 
-      // Forces
-      for (const node of sNodes) {
-        if (node.fx != null) { node.x = node.fx; node.vx = 0; }
-        if (node.fy != null) { node.y = node.fy; node.vx = 0; }
-        if (node.type === "layer") continue; // layer nodes held in ring, just dampen
+    const tick = () => {
+      const { nodes: sNodes, edges: sEdges } = simRef.current;
+      const st = stateRef.current;
+      const W = canvas.width, H = canvas.height;
+      const cx = W / 2, cy = H / 2;
 
-        // Center gravity
-        node.vx += (cx - node.x) * 0.003;
-        node.vy += (cy - node.y) * 0.003;
+      // --- Physics ---
+      if (alpha > 0.01) {
+        // Repulsion
+        for (let i = 0; i < sNodes.length; i++) {
+          const a = sNodes[i];
+          if (a.type === "layer") continue;
+          for (let j = 0; j < sNodes.length; j++) {
+            if (i === j) continue;
+            const b = sNodes[j];
+            const dx = a.x - b.x, dy = a.y - b.y;
+            const distSq = dx*dx + dy*dy + 1;
+            const dist = Math.sqrt(distSq);
+            const strength = b.type === "layer" ? 5000 : 900;
+            a.vx += (dx / dist) * (strength / distSq) * alpha;
+            a.vy += (dy / dist) * (strength / distSq) * alpha;
+          }
+          // Center gravity
+          a.vx += (cx - a.x) * 0.002 * alpha;
+          a.vy += (cy - a.y) * 0.002 * alpha;
+        }
+        // Spring edges
+        for (const edge of sEdges) {
+          const { source: s, target: t } = edge;
+          const dx = t.x - s.x, dy = t.y - s.y;
+          const dist = Math.sqrt(dx*dx + dy*dy) + 0.01;
+          const ideal = t.type === "layer" ? 130 : 90;
+          const k = 0.035 * alpha;
+          const f = (dist - ideal) * k;
+          const fx = (dx / dist) * f, fy = (dy / dist) * f;
+          if (s.type !== "layer" && s.fx == null) { s.vx += fx; s.vy += fy; }
+          if (t.type !== "layer" && t.fx == null) { t.vx -= fx; t.vy -= fy; }
+        }
+        // Integrate
+        for (const n of sNodes) {
+          if (n.type === "layer" || n.fx != null) continue;
+          n.vx *= 0.85; n.vy *= 0.85;
+          n.x += n.vx; n.y += n.vy;
+        }
+        alpha *= 0.997;
+      }
 
-        // Repulsion from other company nodes
-        for (const other of sNodes) {
-          if (other === node) continue;
-          const dx = node.x - other.x;
-          const dy = node.y - other.y;
-          const distSq = dx * dx + dy * dy + 1;
-          const dist = Math.sqrt(distSq);
-          const rep = other.type === "layer" ? 4000 : 800;
-          node.vx += (dx / dist) * (rep / distSq);
-          node.vy += (dy / dist) * (rep / distSq);
+      // Pinned drag node
+      for (const n of sNodes) {
+        if (n.fx != null) { n.x = n.fx; n.vx = 0; }
+        if (n.fy != null) { n.y = n.fy; n.vy = 0; }
+      }
+
+      // --- Render ---
+      ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(st.pan.x, st.pan.y);
+      ctx.scale(st.scale, st.scale);
+
+      const hovNode = st.hovered;
+      const selNode = st.selected;
+
+      // Collect highlighted node ids
+      const highlightedIds = new Set<string>();
+      if (hovNode) {
+        highlightedIds.add(hovNode.id);
+        for (const e of sEdges) {
+          if (e.source.id === hovNode.id) highlightedIds.add(e.target.id);
+          if (e.target.id === hovNode.id) highlightedIds.add(e.source.id);
         }
       }
-
-      // Spring edges
-      for (const edge of sEdges) {
-        const { source, target } = edge;
-        const dx = target.x - source.x;
-        const dy = target.y - source.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) + 0.01;
-        const ideal = target.type === "layer" ? 140 : 100;
-        const k = 0.04;
-        const force = (dist - ideal) * k;
-        const fx = (dx / dist) * force;
-        const fy = (dy / dist) * force;
-        if (source.type !== "layer" && source.fx == null) { source.vx += fx; source.vy += fy; }
-        if (target.type !== "layer" && target.fx == null) { target.vx -= fx; target.vy -= fy; }
-      }
-
-      // Integrate + dampen
-      for (const node of sNodes) {
-        if (node.type === "layer") continue;
-        if (node.fx != null) continue;
-        node.vx *= 0.88;
-        node.vy *= 0.88;
-        node.x += node.vx;
-        node.y += node.vy;
-      }
-
-      // Draw
-      ctx!.clearRect(0, 0, W, H);
-      ctx!.save();
-      ctx!.translate(panRef.current.x, panRef.current.y);
-      ctx!.scale(scaleRef.current, scaleRef.current);
 
       // Edges
       for (const edge of sEdges) {
-        const { source, target } = edge;
-        const isHighlighted = hoveredNode
-          ? hoveredNode === source || hoveredNode === target
+        const hl = hovNode
+          ? edge.source.id === hovNode.id || edge.target.id === hovNode.id
           : false;
-
-        const grad = ctx!.createLinearGradient(source.x, source.y, target.x, target.y);
-        const color = getNodeColor(target.type === "layer" ? target : source);
-        grad.addColorStop(0, color + (isHighlighted ? "cc" : "44"));
-        grad.addColorStop(1, color + (isHighlighted ? "88" : "22"));
-
-        ctx!.beginPath();
-        ctx!.moveTo(source.x, source.y);
-        ctx!.lineTo(target.x, target.y);
-        ctx!.strokeStyle = grad;
-        ctx!.lineWidth = isHighlighted ? 1.5 : 0.8;
-
-        if (!isHighlighted) {
-          ctx!.setLineDash([3, 6]);
-        } else {
-          ctx!.setLineDash([]);
-        }
-        ctx!.stroke();
-        ctx!.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(edge.source.x, edge.source.y);
+        ctx.lineTo(edge.target.x, edge.target.y);
+        ctx.strokeStyle = edgeColor(edge, hl);
+        ctx.lineWidth = hl ? 1 : 0.5;
+        if (!hl) ctx.setLineDash([2, 8]);
+        else ctx.setLineDash([]);
+        ctx.stroke();
+        ctx.setLineDash([]);
       }
 
       // Nodes
       for (const node of sNodes) {
-        const isHovered = hoveredNode === node;
-        const isSelected = selectedNode === node;
-        const r = node.type === "layer" ? 30 : (isHovered ? 20 : 16);
-        const color = getNodeColor(node);
-        const glow = getNodeGlow(node);
+        const isHov = hovNode?.id === node.id;
+        const isSel = selNode?.id === node.id;
+        const isDim = hovNode && !highlightedIds.has(node.id);
+        const r = node.type === "layer" ? 28 : (isHov ? 18 : 14);
+        const baseAlpha = isDim ? 0.2 : 1;
+        const color = nodeColor(node, baseAlpha);
 
-        // Glow
-        if (isHovered || isSelected || node.type === "layer") {
-          ctx!.save();
-          ctx!.shadowColor = glow;
-          ctx!.shadowBlur = node.type === "layer" ? 24 : 16;
-          ctx!.beginPath();
-          ctx!.arc(node.x, node.y, r, 0, Math.PI * 2);
-          ctx!.fillStyle = color + (node.type === "layer" ? "33" : "22");
-          ctx!.fill();
-          ctx!.restore();
+        ctx.save();
+
+        // Outer glow (hover / selected / layer)
+        if (isHov || isSel || node.type === "layer") {
+          ctx.shadowColor = nodeGlow(node);
+          ctx.shadowBlur  = isHov ? 28 : (node.type === "layer" ? 18 : 10);
         }
 
-        // Node circle
-        ctx!.save();
-        ctx!.shadowColor = glow;
-        ctx!.shadowBlur = isHovered ? 20 : 8;
-        ctx!.beginPath();
-        ctx!.arc(node.x, node.y, r, 0, Math.PI * 2);
+        // Fill
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+        const grad = ctx.createRadialGradient(
+          node.x - r * 0.25, node.y - r * 0.25, r * 0.05,
+          node.x, node.y, r
+        );
+        grad.addColorStop(0, isHov ? `rgba(255,255,255,${0.95 * baseAlpha})` : color);
+        grad.addColorStop(1, nodeColor(node, 0.5 * baseAlpha));
+        ctx.fillStyle = grad;
+        ctx.fill();
 
-        // Glassmorphism fill
-        const grad2 = ctx!.createRadialGradient(node.x - r * 0.3, node.y - r * 0.3, r * 0.1, node.x, node.y, r);
-        grad2.addColorStop(0, color + "ee");
-        grad2.addColorStop(1, color + "88");
-        ctx!.fillStyle = grad2;
-        ctx!.fill();
+        // Stroke
+        ctx.strokeStyle = isHov || isSel
+          ? `rgba(255,255,255,${0.7 * baseAlpha})`
+          : nodeColor(node, 0.3 * baseAlpha);
+        ctx.lineWidth = isSel ? 1.5 : 0.75;
+        ctx.stroke();
 
-        // Ring
-        ctx!.strokeStyle = color;
-        ctx!.lineWidth = isSelected ? 2.5 : (isHovered ? 2 : 1.5);
-        ctx!.stroke();
-        ctx!.restore();
+        ctx.restore();
 
-        // Label
-        ctx!.save();
-        ctx!.fillStyle = node.type === "layer" ? "#ffffff" : "#e2e8f0";
-        ctx!.font = node.type === "layer"
-          ? `bold ${Math.max(9, r * 0.38)}px system-ui`
-          : `${Math.max(8, r * 0.52)}px system-ui`;
-        ctx!.textAlign = "center";
-        ctx!.textBaseline = "middle";
-
+        // Labels
+        ctx.save();
+        ctx.globalAlpha = isDim ? 0.15 : 1;
         if (node.type === "layer") {
-          // Multi-line for layer names
+          ctx.font = `500 ${Math.max(9, r * 0.36)}px system-ui`;
+          ctx.fillStyle = "#fff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
           const words = node.label.split(" ");
           if (words.length > 1) {
-            ctx!.fillText(words[0], node.x, node.y - 6);
-            ctx!.fillText(words.slice(1).join(" "), node.x, node.y + 7);
+            ctx.fillText(words[0], node.x, node.y - 6);
+            ctx.fillText(words.slice(1).join(" "), node.x, node.y + 7);
           } else {
-            ctx!.fillText(node.label, node.x, node.y);
+            ctx.fillText(node.label, node.x, node.y);
           }
-        } else if (isHovered || isSelected) {
-          const maxLen = 12;
-          const label = node.label.length > maxLen ? node.label.slice(0, maxLen) + "…" : node.label;
-          ctx!.fillText(label, node.x, node.y + r + 12);
+        } else if (isHov || isSel) {
+          ctx.font = `400 9px system-ui`;
+          ctx.fillStyle = "rgba(255,255,255,0.9)";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          const lbl = node.label.length > 14 ? node.label.slice(0, 13) + "…" : node.label;
+          ctx.fillText(lbl, node.x, node.y + r + 5);
         }
-        ctx!.restore();
+        ctx.restore();
       }
 
-      ctx!.restore();
-      frame++;
-      animRef.current = requestAnimationFrame(step);
+      ctx.restore();
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      ro.disconnect();
+    };
+  }, []);
+
+  // Coordinate helpers
+  const toSim = useCallback((clientX: number, clientY: number) => {
+    const canvas = canvasRef.current!;
+    const rect = canvas.getBoundingClientRect();
+    const st = stateRef.current;
+    return {
+      x: (clientX - rect.left - st.pan.x) / st.scale,
+      y: (clientY - rect.top  - st.pan.y) / st.scale,
+    };
+  }, []);
+
+  const hitTest = useCallback((sx: number, sy: number) => {
+    const { nodes } = simRef.current;
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      const n = nodes[i];
+      const r = n.type === "layer" ? 30 : 18;
+      if ((n.x - sx) ** 2 + (n.y - sy) ** 2 < r * r) return n;
     }
+    return null;
+  }, []);
 
-    animRef.current = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(animRef.current);
-  }, [nodes, edges, hoveredNode, selectedNode]);
-
-  // Interaction handlers
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    if (dragNodeRef.current) {
-      const { cx, cy } = getCanvasCoords(e.nativeEvent, canvas);
-      dragNodeRef.current.fx = cx + offsetRef.current.x;
-      dragNodeRef.current.fy = cy + offsetRef.current.y;
-      dragNodeRef.current.x = dragNodeRef.current.fx;
-      dragNodeRef.current.y = dragNodeRef.current.fy;
+    const st = stateRef.current;
+    if (st.drag) {
+      const { x, y } = toSim(e.clientX, e.clientY);
+      st.drag.fx = x + st.dragOffset.x;
+      st.drag.fy = y + st.dragOffset.y;
+      st.hasDragged = true;
       return;
     }
-
-    if (isPanningRef.current) {
+    if (st.isPanning) {
+      const canvas = canvasRef.current!;
       const rect = canvas.getBoundingClientRect();
-      const dx = e.clientX - rect.left - panStartRef.current.x;
-      const dy = e.clientY - rect.top - panStartRef.current.y;
-      panRef.current = { x: panStartRef.current.panX + dx, y: panStartRef.current.panY + dy };
+      st.pan.x = st.panStart.px + (e.clientX - rect.left - st.panStart.mx);
+      st.pan.y = st.panStart.py + (e.clientY - rect.top  - st.panStart.my);
       return;
     }
-
-    const { cx, cy } = getCanvasCoords(e.nativeEvent, canvas);
-    const found = findNodeAt(cx, cy);
-    setHoveredNode(found);
-    canvas.style.cursor = found ? "pointer" : "grab";
-  }, [getCanvasCoords, findNodeAt]);
+    const { x, y } = toSim(e.clientX, e.clientY);
+    const found = hitTest(x, y);
+    st.hovered = found;
+    setHovered(found);
+    canvasRef.current!.style.cursor = found ? "pointer" : "grab";
+  }, [toSim, hitTest]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const { cx, cy } = getCanvasCoords(e.nativeEvent, canvas);
-    const found = findNodeAt(cx, cy);
-
+    const { x, y } = toSim(e.clientX, e.clientY);
+    const found = hitTest(x, y);
+    const st = stateRef.current;
+    st.hasDragged = false;
     if (found) {
-      dragNodeRef.current = found;
-      offsetRef.current = { x: found.x - cx, y: found.y - cy };
-      setIsDragging(true);
+      st.drag = found;
+      st.dragOffset = { x: found.x - x, y: found.y - y };
     } else {
-      isPanningRef.current = true;
+      st.isPanning = true;
+      const canvas = canvasRef.current!;
       const rect = canvas.getBoundingClientRect();
-      panStartRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-        panX: panRef.current.x,
-        panY: panRef.current.y,
-      };
+      st.panStart = { mx: e.clientX - rect.left, my: e.clientY - rect.top, px: st.pan.x, py: st.pan.y };
     }
-  }, [getCanvasCoords, findNodeAt]);
+  }, [toSim, hitTest]);
 
-  const handleMouseUp = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    if (dragNodeRef.current && !isDragging) {
-      setSelectedNode((prev) => prev === dragNodeRef.current ? null : dragNodeRef.current);
+  const handleMouseUp = useCallback(() => {
+    const st = stateRef.current;
+    if (st.drag && !st.hasDragged) {
+      const node = st.drag;
+      st.selected = st.selected?.id === node.id ? null : node;
+      setSelectedNode(st.selected);
     }
-
-    if (dragNodeRef.current) {
-      dragNodeRef.current.fx = null;
-      dragNodeRef.current.fy = null;
+    if (st.drag) {
+      st.drag.fx = null;
+      st.drag.fy = null;
+      st.drag = null;
     }
-
-    dragNodeRef.current = null;
-    isPanningRef.current = false;
-    setIsDragging(false);
-  }, [isDragging]);
-
-  const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas || isDragging) return;
-    const { cx, cy } = getCanvasCoords(e.nativeEvent, canvas);
-    const found = findNodeAt(cx, cy);
-    setSelectedNode((prev) => prev?.id === found?.id ? null : found);
-  }, [getCanvasCoords, findNodeAt, isDragging]);
+    st.isPanning = false;
+  }, []);
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    scaleRef.current = Math.min(3, Math.max(0.3, scaleRef.current * delta));
+    const canvas = canvasRef.current!;
+    const rect  = canvas.getBoundingClientRect();
+    const st    = stateRef.current;
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const delta = e.deltaY > 0 ? 0.88 : 1.12;
+    const next  = Math.min(4, Math.max(0.25, st.scale * delta));
+    // Zoom toward cursor
+    st.pan.x = mx - (mx - st.pan.x) * (next / st.scale);
+    st.pan.y = my - (my - st.pan.y) * (next / st.scale);
+    st.scale = next;
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-zinc-200/60 bg-zinc-950 dark:border-zinc-800/60" style={{ height: 520 }}>
-      {/* Background grid */}
-      <div className="pointer-events-none absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, rgba(139,92,246,0.4) 1px, transparent 0)",
-          backgroundSize: "32px 32px",
-        }}
-      />
-
+    <div className="relative h-full w-full">
       <canvas
         ref={canvasRef}
-        width={1100}
-        height={520}
         className="h-full w-full"
-        style={{ touchAction: "none" }}
+        style={{ touchAction: "none", cursor: "grab" }}
         onMouseMove={handleMouseMove}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onClick={handleClick}
+        onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
       />
 
-      {/* Tooltip / detail panel */}
+      {/* Detail panel */}
       {selectedNode && (
-        <div className="absolute bottom-4 left-4 max-w-xs rounded-2xl border border-zinc-700/80 bg-zinc-900/90 p-4 backdrop-blur-lg">
+        <div className="absolute bottom-6 left-6 max-w-[220px] rounded-xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-violet-400">
+              <p className="text-[9px] uppercase tracking-widest text-white/30">
                 {selectedNode.type === "layer" ? "Layer" : selectedNode.category}
               </p>
-              <h4 className="mt-0.5 text-sm font-bold text-white">{selectedNode.label}</h4>
+              <h4 className="mt-0.5 text-sm font-medium text-white">{selectedNode.label}</h4>
             </div>
             <button
-              onClick={() => setSelectedNode(null)}
-              className="text-zinc-500 hover:text-zinc-300"
+              onClick={() => { stateRef.current.selected = null; setSelectedNode(null); }}
+              className="text-white/20 hover:text-white/60 transition"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
           {selectedNode.valuation && selectedNode.valuation !== "N/A" && (
-            <p className="mt-2 text-xs text-zinc-400">Valuation: <span className="text-white">{selectedNode.valuation}</span></p>
+            <p className="mt-2 text-xs text-white/40">{selectedNode.valuation}</p>
           )}
-          <div className="mt-2 flex flex-wrap gap-1">
-            {selectedNode.layerIds?.map((lid) => {
-              const color = LAYER_COLORS[lid] ?? "#a78bfa";
-              return (
-                <span key={lid} className="rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: color + "22", color }}>
-                  {lid}
-                </span>
-              );
-            })}
-          </div>
           {selectedNode.website && (
             <a
               href={selectedNode.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 block text-xs font-semibold text-violet-400 hover:text-violet-300"
+              className="mt-3 block text-xs text-white/40 hover:text-white/80 transition"
             >
               Visit site →
             </a>
@@ -460,20 +420,10 @@ export function EcosystemGraph({ nodes, edges, selectedApproach }: EcosystemGrap
         </div>
       )}
 
-      {/* Legend */}
-      <div className="pointer-events-none absolute right-3 top-3 flex flex-col gap-1 rounded-xl bg-zinc-900/80 p-2 backdrop-blur-sm">
-        {Object.entries(LAYER_COLORS).map(([lid, color]) => (
-          <div key={lid} className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full" style={{ background: color }} />
-            <span className="text-[9px] capitalize text-zinc-400">{lid}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Controls hint */}
-      <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg bg-zinc-900/70 px-2 py-1 text-[9px] text-zinc-500 backdrop-blur-sm">
-        Scroll to zoom · Drag to pan · Click node for details
-      </div>
+      {/* Hint */}
+      <p className="pointer-events-none absolute bottom-4 right-4 text-[9px] tracking-widest text-white/15 uppercase">
+        scroll to zoom · drag to pan · click to inspect
+      </p>
     </div>
   );
 }

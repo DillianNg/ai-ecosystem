@@ -32,10 +32,10 @@ export function DashboardView({ layers }: DashboardViewProps) {
     <section className="space-y-8" aria-label="Architecture dashboard">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-violet-500">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-white/25">
             View switcher
           </p>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-white/35">
             Select an architecture lens to explore the stack
           </p>
         </div>
