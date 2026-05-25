@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getBundledData } from "@/lib/data";
-import { EcosystemGraph } from "@/components/graph/EcosystemGraph";
+import { EcosystemGraphSection } from "@/components/graph/EcosystemGraphSection";
 
 export const metadata: Metadata = {
   title: "Ecosystem Graph",
@@ -10,9 +10,10 @@ export const metadata: Metadata = {
 export default function GraphPage() {
   const { layers } = getBundledData();
   return (
-    // Full viewport minus the 64px header — no padding, no footer bleed
-    <div style={{ height: "calc(100vh - 64px)" }}>
-      <EcosystemGraph layers={layers} />
+    <div className="bg-black" style={{ height: "calc(100vh - 56px)" }}>
+      <div className="h-full px-8 py-8">
+        <EcosystemGraphSection layers={layers} />
+      </div>
     </div>
   );
 }
