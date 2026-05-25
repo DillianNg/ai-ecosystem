@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Company } from "@/types/ecosystem";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
-import { LAYER_ACCENTS } from "@/lib/constants";
 
 export interface CompanyInfoCardProps {
   company: Company | null;
@@ -20,75 +19,88 @@ export function CompanyInfoCard({ company, layerId, onClose }: CompanyInfoCardPr
     return () => window.removeEventListener("keydown", onKey);
   }, [company, onClose]);
 
-  const accent = LAYER_ACCENTS[layerId] ?? LAYER_ACCENTS.infrastructure;
-
   return (
     <AnimatePresence>
       {company && (
         <motion.div
           key={company.id}
-          initial={{ opacity: 0, scale: 0.92, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 12 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-auto fixed bottom-6 right-6 z-50 w-80"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-auto absolute bottom-6 right-6 z-50 w-[260px] animate-fade-in-up"
+          style={{ animationDuration: "0.3s" }}
         >
-          <div className="relative rounded-2xl border border-white/10 bg-black/90 p-5 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
-            {/* Subtle layer color top accent */}
-            <div className={`absolute inset-x-0 top-0 h-px rounded-t-2xl bg-gradient-to-r ${accent.from} ${accent.to} opacity-60`} />
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="absolute right-3 top-3 rounded-lg p-1 text-zinc-500 transition hover:bg-white/10 hover:text-zinc-200"
-              aria-label="Close"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            <div className="flex items-start gap-3 pr-6">
-              <CompanyLogo name={company.name} logo={company.logo} size={44} />
-              <div className="min-w-0">
-                <h3 className="truncate font-bold text-zinc-50">{company.name}</h3>
-                <p className={`text-xs font-medium ${accent.text}`}>{company.category}</p>
+          <div className="rounded-xl border border-white/8 bg-black/90 p-5 backdrop-blur-xl">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start gap-3 min-w-0">
+                <CompanyLogo name={company.name} logo={company.logo} size={32} />
+                <div className="min-w-0">
+                  <p className="text-[9px] uppercase tracking-[0.25em] text-white/25">
+                    {company.category}
+                  </p>
+                  <h4 className="mt-0.5 text-sm font-medium text-white truncate">
+                    {company.name}
+                  </h4>
+                </div>
               </div>
+              <button
+                onClick={onClose}
+                className="shrink-0 text-white/15 hover:text-white/50 transition"
+                aria-label="Close"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
-            <p className="mt-3 text-xs leading-relaxed text-zinc-400">{company.description}</p>
+            <p className="mt-3 text-xs leading-relaxed text-white/35 line-clamp-3">
+              {company.description}
+            </p>
 
-            <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-              <div>
-                <dt className="text-zinc-600">Valuation</dt>
-                <dd className="font-semibold text-zinc-200">{company.valuation}</dd>
-              </div>
-              <div>
-                <dt className="text-zinc-600">Founded</dt>
-                <dd className="font-semibold text-zinc-200">{company.founded}</dd>
-              </div>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
+              {company.valuation && company.valuation !== "N/A" && company.valuation !== "$NaNB" && (
+                <div>
+                  <dt className="text-white/20">Funding</dt>
+                  <dd className="text-white/55">{company.valuation}</dd>
+                </div>
+              )}
+              {company.founded && (
+                <div>
+                  <dt className="text-white/20">Founded</dt>
+                  <dd className="text-white/55">{company.founded}</dd>
+                </div>
+              )}
+              {company.headquarters && (
+                <div className="col-span-2">
+                  <dt className="text-white/20">HQ</dt>
+                  <dd className="text-white/55">{company.headquarters}</dd>
+                </div>
+              )}
             </dl>
 
-            <div className="mt-4 flex gap-2">
+            <div className="mt-2 flex flex-wrap gap-1">
+              {company.layers?.map((lid) => (
+                <span
+                  key={lid}
+                  className="rounded-full border border-white/8 px-2 py-0.5 text-[8px] uppercase tracking-wider text-white/25"
+                >
+                  {lid}
+                </span>
+              ))}
+            </div>
+
+            {company.website && (
               <a
                 href={company.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex-1 rounded-lg bg-gradient-to-r ${accent.from} ${accent.to} px-3 py-2 text-center text-xs font-semibold text-white transition hover:opacity-90`}
+                className="mt-3 block text-[11px] text-white/25 hover:text-white/60 transition"
               >
-                Visit site ↗
+                Visit site →
               </a>
-              {company.social?.twitter && (
-                <a
-                  href={company.social.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-lg border border-white/10 px-3 py-2 text-xs text-zinc-400 transition hover:border-white/20 hover:text-zinc-200"
-                >
-                  X
-                </a>
-              )}
-            </div>
+            )}
           </div>
         </motion.div>
       )}

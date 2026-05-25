@@ -13,8 +13,7 @@ import { COMPANY_LOCATIONS } from "@/data/company-locations";
 import { CompanyInfoCard } from "@/components/ui/CompanyInfoCard";
 import { LAYER_ACCENTS } from "@/lib/constants";
 
-const GEO_URL =
-  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 interface MarkerData {
   id: string;
@@ -31,7 +30,6 @@ interface ClusterData {
 }
 
 function clusterMarkers(markers: MarkerData[], zoom: number): ClusterData[] {
-  // Grid cell size in degrees — coarser at low zoom
   const cellDeg = zoom < 1.5 ? 8 : zoom < 2.5 ? 4 : 1.5;
   const map = new Map<string, MarkerData[]>();
 
@@ -88,19 +86,15 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
     [],
   );
 
-  const handleClusterClick = useCallback(
-    (cluster: ClusterData) => {
-      if (cluster.markers.length === 1) {
-        const m = cluster.markers[0];
-        setSelected({ company: m.company, layerId: m.layerId });
-      } else {
-        // Zoom into cluster center
-        setCenter(cluster.coordinates);
-        setZoom((z) => Math.min(z * 2.5, 8));
-      }
-    },
-    [],
-  );
+  const handleClusterClick = useCallback((cluster: ClusterData) => {
+    if (cluster.markers.length === 1) {
+      const m = cluster.markers[0];
+      setSelected({ company: m.company, layerId: m.layerId });
+    } else {
+      setCenter(cluster.coordinates);
+      setZoom((z) => Math.min(z * 2.5, 8));
+    }
+  }, []);
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-black">
@@ -108,13 +102,8 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
         projection="geoNaturalEarth1"
         style={{ width: "100%", height: "100%" }}
       >
-        <ZoomableGroup
-          zoom={zoom}
-          center={center}
-          onMoveEnd={handleMoveEnd}
-          maxZoom={8}
-        >
-          {/* World geography */}
+        <ZoomableGroup zoom={zoom} center={center} onMoveEnd={handleMoveEnd} maxZoom={8}>
+          {/* Grayscale world geography */}
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map((geo) => (
@@ -122,20 +111,18 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
                   key={geo.rsmKey}
                   geography={geo}
                   style={{
-                    default: { fill: "#111", stroke: "#252525", strokeWidth: 0.3, outline: "none" },
-                    hover:   { fill: "#1a1a1a", stroke: "#333", strokeWidth: 0.3, outline: "none" },
-                    pressed: { fill: "#222", outline: "none" },
+                    default: { fill: "#0f0f0f", stroke: "#1e1e1e", strokeWidth: 0.3, outline: "none" },
+                    hover:   { fill: "#161616", stroke: "#2a2a2a", strokeWidth: 0.3, outline: "none" },
+                    pressed: { fill: "#1a1a1a", outline: "none" },
                   }}
                 />
               ))
             }
           </Geographies>
 
-          {/* Company clusters / markers */}
+          {/* Company clusters and single markers */}
           {clusters.map((cluster) => {
             const isMulti = cluster.markers.length > 1;
-            const m = cluster.markers[0];
-            const accent = LAYER_ACCENTS[m.layerId] ?? LAYER_ACCENTS.infrastructure;
             const r = isMulti
               ? Math.min(4 + Math.sqrt(cluster.markers.length) * 2.5, 14) / zoom
               : 3.5 / zoom;
@@ -150,8 +137,8 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
                   <>
                     <circle
                       r={r}
-                      fill="rgba(255,255,255,0.12)"
-                      stroke="rgba(255,255,255,0.4)"
+                      fill="rgba(255,255,255,0.08)"
+                      stroke="rgba(255,255,255,0.35)"
                       strokeWidth={0.8 / zoom}
                       className="cursor-pointer"
                     />
@@ -159,10 +146,10 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
                       textAnchor="middle"
                       dominantBaseline="central"
                       style={{
-                        fill: "rgba(255,255,255,0.8)",
+                        fill: "rgba(255,255,255,0.7)",
                         fontSize: Math.max(4, 7 / zoom),
-                        fontFamily: "system-ui",
-                        fontWeight: 600,
+                        fontFamily: "var(--font-geist-sans), system-ui",
+                        fontWeight: 500,
                         pointerEvents: "none",
                       }}
                     >
@@ -172,12 +159,12 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
                 ) : (
                   <circle
                     r={r}
-                    fill="rgba(255,255,255,0.85)"
-                    stroke="rgba(255,255,255,0.3)"
+                    fill="rgba(255,255,255,0.8)"
+                    stroke="rgba(255,255,255,0.2)"
                     strokeWidth={0.5 / zoom}
-                    className={`cursor-pointer transition-opacity hover:opacity-100`}
+                    className="cursor-pointer"
                     style={{
-                      filter: `drop-shadow(0 0 ${4 / zoom}px ${accent.from.replace("from-", "")})`,
+                      filter: `drop-shadow(0 0 ${3 / zoom}px rgba(255,255,255,0.5))`,
                     }}
                   />
                 )}
@@ -187,55 +174,46 @@ export function LocationMap({ layers }: { layers: Layer[] }) {
         </ZoomableGroup>
       </ComposableMap>
 
-      {/* Zoom controls */}
-      <div className="absolute right-4 top-4 flex flex-col gap-1">
-        <button
-          type="button"
-          onClick={() => setZoom((z) => Math.min(z * 1.5, 8))}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-black/70 text-zinc-300 backdrop-blur-sm transition hover:border-white/20 hover:text-white"
-          aria-label="Zoom in"
-        >
-          +
-        </button>
-        <button
-          type="button"
-          onClick={() => setZoom((z) => Math.max(z / 1.5, 1))}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-black/70 text-zinc-300 backdrop-blur-sm transition hover:border-white/20 hover:text-white"
-          aria-label="Zoom out"
-        >
-          −
-        </button>
-        <button
-          type="button"
-          onClick={() => { setZoom(1); setCenter([0, 20]); }}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-black/70 text-zinc-500 backdrop-blur-sm transition hover:border-white/20 hover:text-zinc-200"
-          aria-label="Reset"
-          title="Reset view"
-        >
-          ⊙
-        </button>
+      {/* Zoom controls — text-only, context style */}
+      <div className="absolute right-6 top-6 flex flex-col gap-1">
+        {[
+          { label: "+", action: () => setZoom((z) => Math.min(z * 1.5, 8)), title: "Zoom in" },
+          { label: "−", action: () => setZoom((z) => Math.max(z / 1.5, 1)), title: "Zoom out" },
+          { label: "⊙", action: () => { setZoom(1); setCenter([0, 20]); }, title: "Reset" },
+        ].map(({ label, action, title }) => (
+          <button
+            key={title}
+            type="button"
+            onClick={action}
+            title={title}
+            aria-label={title}
+            className="flex h-8 w-8 items-center justify-center border border-white/6 bg-black/80 text-sm text-white/30 transition hover:border-white/12 hover:text-white/70"
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Legend */}
-      <div className="pointer-events-none absolute bottom-4 left-4 flex flex-col gap-1.5">
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+      {/* Layer legend */}
+      <div className="pointer-events-none absolute bottom-6 left-6 flex flex-col gap-1.5">
+        <p className="mb-2 text-[10px] uppercase tracking-[0.35em] text-white/20">
           Layers
         </p>
         {layers.map((layer) => {
           const a = LAYER_ACCENTS[layer.id] ?? LAYER_ACCENTS.infrastructure;
           return (
-            <div key={layer.id} className="flex items-center gap-2 text-xs text-zinc-500">
+            <div key={layer.id} className="flex items-center gap-2">
               <span className={`h-1.5 w-1.5 rounded-full bg-gradient-to-r ${a.from} ${a.to}`} />
-              {layer.name}
+              <span className="text-[11px] text-white/25">{layer.name}</span>
             </div>
           );
         })}
-        <p className="mt-2 text-[10px] text-zinc-700">
-          Click cluster to zoom · Click marker for details
+        <p className="mt-3 text-[9px] uppercase tracking-[0.3em] text-white/10">
+          Click cluster to zoom · marker to inspect
         </p>
       </div>
 
-      {/* Company info card */}
+      {/* Detail card */}
       {selected && (
         <CompanyInfoCard
           company={selected.company}
