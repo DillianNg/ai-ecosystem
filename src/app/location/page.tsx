@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function LocationPage() {
   const { layers } = getBundledData();
   return (
-    // Full viewport minus the 56px fixed header — same pattern as /graph/
+    // Full viewport minus the 56px fixed header
     <div className="bg-black" style={{ height: "calc(100vh - 56px)" }}>
       <LocationMap layers={layers} />
     </div>
