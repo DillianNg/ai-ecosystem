@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal Tracking 2.0</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0D0F14;
+  --surface:#13161D;
+  --surface-2:#191D26;
+  --border:#262B36;
+  --accent:#E8A838;
+  --accent-dim:rgba(232,168,56,.14);
+  --danger:#E05252;
+  --success:#3DBE6C;
+  --muted:#6B7280;
+  --text:#D6DAE2;
+  --text-dim:#9AA1AE;
+  --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
+  --sans:'Inter','DM Sans',system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:var(--mono)}
+button{font-family:var(--sans);cursor:pointer}
+input,select,textarea{font-family:var(--sans)}
+a{color:var(--accent)}
+
+/* layout */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:212px;flex-shrink:0;background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+}
+.brand{padding:20px 18px;border-bottom:1px solid var(--border)}
+.brand h1{font-size:14px;margin:0;letter-spacing:.5px;font-weight:600}
+.brand .v{font-family:var(--mono);color:var(--accent);font-size:11px}
+.brand .sub{color:var(--muted);font-size:11px;margin-top:3px;font-family:var(--mono)}
+.nav{padding:10px 8px;display:flex;flex-direction:column;gap:2px}
+.nav button{
+  display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+  background:transparent;border:0;color:var(--text-dim);
+  padding:10px 12px;border-radius:8px;font-size:13.5px;font-weight:500;
+  transition:background .12s,color .12s;
+}
+.nav button:hover{background:var(--surface-2);color:var(--text)}
+.nav button.active{background:var(--accent-dim);color:var(--accent)}
+.nav button .ico{width:18px;height:18px;flex-shrink:0}
+.nav button.active .ico{stroke:var(--accent)}
+.nav .ico{stroke:currentColor;fill:none;stroke-width:1.8}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 26px;border-bottom:1px solid var(--border);
+  background:rgba(13,15,20,.85);backdrop-filter:blur(8px);
+  position:sticky;top:0;z-index:20;
+}
+.topbar .date{font-family:var(--mono);font-size:13px}
+.topbar .date .d{color:var(--accent)}
+.topbar .summary{color:var(--text-dim);font-size:12.5px;font-family:var(--mono)}
+.topbar .summary b{color:var(--text);font-weight:500}
+.content{padding:26px;max-width:1180px;width:100%}
+
+.module-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.module-head h2{margin:0;font-size:19px;font-weight:600;letter-spacing:.3px}
+.module-head .desc{color:var(--muted);font-size:12.5px;margin-top:2px}
+
+/* generic ui */
+.btn{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:8px 14px;border-radius:7px;font-size:12.5px;font-weight:500;
+  transition:border-color .12s,background .12s;
+}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#1a1206;border-color:var(--accent);font-weight:600}
+.btn.primary:hover{background:#f2b94e}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 10px;font-size:11.5px;border-radius:6px}
+.btn.danger:hover{border-color:var(--danger);color:var(--danger)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.grid{display:grid;gap:16px}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 12px;font-weight:600}
+
+label.field{display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:var(--text-dim);font-weight:500}
+input,select,textarea{
+  background:var(--bg);border:1px solid var(--border);color:var(--text);
+  padding:9px 11px;border-radius:7px;font-size:13px;width:100%;
+  font-family:var(--mono);
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical;min-height:54px;line-height:1.4}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px}
+.form-actions{margin-top:15px;display:flex;gap:10px;justify-content:flex-end}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.8px;padding:8px 10px;border-bottom:1px solid var(--border)}
+td{padding:10px;border-bottom:1px solid var(--border);font-family:var(--mono);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:rgba(255,255,255,.015)}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-family:var(--mono);border:1px solid var(--border);color:var(--text-dim)}
+.tag.amber{color:var(--accent);border-color:var(--accent);background:var(--accent-dim)}
+.tag.red{color:var(--danger);border-color:var(--danger);background:rgba(224,82,82,.12)}
+.tag.green{color:var(--success);border-color:var(--success);background:rgba(61,190,108,.12)}
+
+.empty{color:var(--muted);font-size:12.5px;padding:18px;text-align:center;font-style:italic}
+.row-actions{display:flex;gap:6px}
+
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.stat .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);font-weight:600}
+.stat .val{font-family:var(--mono);font-size:25px;font-weight:600;margin-top:7px;letter-spacing:-.5px}
+.stat .meta{font-size:11px;color:var(--text-dim);margin-top:4px;font-family:var(--mono)}
+.val.pos{color:var(--success)} .val.neg{color:var(--danger)} .val.amber{color:var(--accent)}
+
+.health-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.dot-green{background:var(--success);box-shadow:0 0 8px var(--success)}
+.dot-yellow{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.dot-red{background:var(--danger);box-shadow:0 0 8px var(--danger)}
+
+/* project lanes */
+.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.lane{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.lane h3{margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.9px;display:flex;align-items:center;justify-content:space-between}
+.lane.warn{border-color:rgba(232,168,56,.4)}
+.lane .count{font-family:var(--mono);color:var(--muted);font-weight:400}
+.proj{background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px 12px}
+.proj.warn{border-color:var(--accent);background:var(--accent-dim)}
+.proj .pname{font-weight:600;font-size:13.5px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.proj .pdesc{color:var(--text-dim);font-size:11.5px;margin-top:3px}
+.proj .pmeta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:7px}
+.proj .pnote{font-size:11.5px;color:var(--text-dim);margin-top:6px;border-left:2px solid var(--border);padding-left:8px;font-style:italic}
+.proj .pactions{display:flex;gap:6px;margin-top:9px}
+.icon-btn{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--text-dim);font-size:15px;line-height:1;padding:0}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn.minus:hover{border-color:var(--danger);color:var(--danger)}
+
+/* heatmap */
+.heatmap-wrap{overflow-x:auto;padding-bottom:6px}
+.heatmap{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px}
+.hcell{width:13px;height:13px;border-radius:3px;background:#1b1f29;border:1px solid rgba(255,255,255,.03)}
+.hcell.l1{background:#5a4214} .hcell.l2{background:#946a1c}
+.hcell.l3{background:#c08e29} .hcell.l4{background:var(--accent)}
+.hlegend{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:10px;font-size:10.5px;color:var(--muted);font-family:var(--mono)}
+.hlegend .hcell{cursor:default}
+
+/* jobs */
+.job{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.job .jhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.job .jtitle{font-weight:600;font-size:15px}
+.job .jcompany{color:var(--accent);font-size:13px;font-family:var(--mono)}
+.job .jmeta{color:var(--muted);font-size:11.5px;margin-top:4px;font-family:var(--mono);display:flex;gap:12px;flex-wrap:wrap}
+.stages{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.stage{padding:6px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface-2);font-size:11.5px;color:var(--text-dim);font-family:var(--mono);transition:all .12s}
+.stage:hover{border-color:var(--accent);color:var(--accent)}
+.stage.done{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.stage.done.terminal{background:rgba(224,82,82,.12);border-color:var(--danger);color:var(--danger)}
+.stage.done.win{background:rgba(61,190,108,.12);border-color:var(--success);color:var(--success)}
+.stage .ts{font-size:9.5px;opacity:.7;display:block}
+
+.tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--border)}
+.tabs button{background:transparent;border:0;color:var(--text-dim);padding:9px 14px;font-size:13px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;height:300px}
+
+/* toast */
+#toasts{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;gap:9px;z-index:200}
+.toast{
+  background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--accent);
+  padding:11px 15px;border-radius:8px;font-size:12.5px;min-width:210px;max-width:330px;
+  box-shadow:0 8px 28px rgba(0,0,0,.45);animation:slideIn .25s ease;
+}
+.toast.success{border-left-color:var(--success)} .toast.danger{border-left-color:var(--danger)}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(5,6,9,.72);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 16px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;width:100%;max-width:560px}
+.modal h3{margin:0 0 16px;font-size:16px}
+.tickbar{display:none;flex-direction:column;gap:8px;margin-top:8px}
+
+.hidden{display:none!important}
+
+@media (max-width:760px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:sticky;top:0;flex-direction:column;border-right:0;border-bottom:1px solid var(--border)}
+  .nav{flex-direction:row;overflow-x:auto;padding:8px}
+  .nav button{flex-direction:column;gap:4px;font-size:11px;padding:8px 12px;min-width:74px;text-align:center}
+  .brand{display:flex;align-items:center;justify-content:space-between;padding:14px 16px}
+  .topbar{flex-direction:column;align-items:flex-start;gap:6px}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div>
+        <h1>PERSONAL TRACKING <span class="v">2.0</span></h1>
+        <div class="sub" id="anchor">session: 2026-06-18</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-mod="finance" class="active">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        <span>Finance</span>
+      </button>
+      <button data-mod="projects">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+        <span>Projects</span>
+      </button>
+      <button data-mod="jobs">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Jobs</span>
+      </button>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="date">// <span class="d" id="todayStr"></span></div>
+      <div class="summary" id="summary"></div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBox"></div></div>
+
+<script>
+/* ============================= STATE ============================= */
+const LS_KEY='pt2_data_v1';
+const DEFAULT={finance:{accounts:[],debts:[],income:[]},projects:[],jobs:[]};
+let DB=load();
+let activeMod='finance';
+let jobsTab='pipeline';
+let charts={};
+
+function load(){
+  try{const r=JSON.parse(localStorage.getItem(LS_KEY));return r?{...structuredClone(DEFAULT),...r,finance:{...DEFAULT.finance,...(r.finance||{})}}:structuredClone(DEFAULT);}
+  catch(e){return structuredClone(DEFAULT);}
+}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(DB));}
+const uid=()=>Math.random().toString(36).slice(2,10);
+
+/* ============================= UTIL ============================= */
+const $=(s,r=document)=>r.querySelector(s);
+const today=()=>new Date();
+function ymd(d){const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
+const todayY=()=>ymd(today());
+function daysSince(dateStr){if(!dateStr)return Infinity;const a=new Date(todayY());const b=new Date(dateStr);return Math.round((a-b)/86400000);}
+function fmtMoney(n){const v=Number(n)||0;const s=v<0?'-':'';return s+'$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function num(v){const n=parseFloat(v);return isNaN(n)?0:n;}
+
+function toast(msg,type=''){
+  const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+  $('#toasts').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},3400);
+}
+
+function download(filename,obj){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Exported '+filename,'success');
+}
+
+/* modal */
+function openModal(html){$('#modalBox').innerHTML=html;$('#modalBg').classList.add('open');}
+function closeModal(){$('#modalBg').classList.remove('open');$('#modalBox').innerHTML='';}
+$('#modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal();});
+
+/* ============================= TOP BAR ============================= */
+function renderTop(){
+  const d=today();
+  $('#todayStr').textContent=d.toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+  const activeProjects=DB.projects.filter(p=>['ongoing','warning'].includes(projState(p))).length;
+  const pipeline=DB.jobs.filter(j=>!j.archived).length;
+  const obligations=monthlyObligations();
+  $('#summary').innerHTML=`<b>${activeProjects}</b> projects active &nbsp;/&nbsp; <b>${pipeline}</b> jobs in pipeline &nbsp;/&nbsp; monthly obligations: <b>${fmtMoney(obligations)}</b>`;
+}
+
+/* ============================= FINANCE ============================= */
+function liquidAssets(){return DB.finance.accounts.filter(a=>a.type!=='credit').reduce((s,a)=>s+num(a.balance),0);}
+function liabilities(){
+  const cc=DB.finance.accounts.filter(a=>a.type==='credit').reduce((s,a)=>s+num(a.balance),0);
+  const debt=DB.finance.debts.reduce((s,d)=>s+num(d.remaining),0);
+  return cc+debt;
+}
+function monthlyObligations(){
+  const minP=DB.finance.accounts.filter(a=>a.type==='credit').reduce((s,a)=>s+num(a.minPayment),0);
+  const inst=DB.finance.debts.reduce((s,d)=>s+num(d.monthlyPayment),0);
+  return minP+inst;
+}
+function healthScore(){
+  const a=liquidAssets(),l=liabilities();
+  if(l===0)return{ratio:0,level:'green',label:'Healthy'};
+  if(a===0)return{ratio:Infinity,level:'red',label:'Critical'};
+  const r=l/a;
+  if(r<0.3)return{ratio:r,level:'green',label:'Healthy'};
+  if(r<0.6)return{ratio:r,level:'yellow',label:'Watch'};
+  return{ratio:r,level:'red',label:'At risk'};
+}
+
+function renderFinance(){
+  const assets=liquidAssets(),liab=liabilities(),net=assets-liab;
+  const oblig=monthlyObligations();
+  const runway=oblig>0?(assets/oblig):Infinity;
+  const h=healthScore();
+  const dotClass={green:'dot-green',yellow:'dot-yellow',red:'dot-red'}[h.level];
+
+  // monthly breakdown
+  let breakdown=[];
+  DB.finance.accounts.filter(a=>a.type==='credit'&&num(a.minPayment)>0).forEach(a=>{
+    breakdown.push({name:a.name+' (min payment)',amount:num(a.minPayment),due:a.dueDate||'',sortKey:dueDay(a.dueDate)});
+  });
+  DB.finance.debts.filter(d=>num(d.monthlyPayment)>0).forEach(d=>{
+    breakdown.push({name:d.name,amount:num(d.monthlyPayment),due:d.endDate?('ends '+d.endDate):'',sortKey:dueDay(d.endDate)});
+  });
+  breakdown.sort((a,b)=>a.sortKey-b.sortKey);
+
+  const incomeTotal=DB.finance.income.reduce((s,i)=>s+num(i.amount),0);
+
+  let html=`
+  <div class="module-head">
+    <div><h2>Finance</h2><div class="desc">Net position, obligations and cash runway</div></div>
+    <div class="row-actions">
+      <button class="btn sm" onclick="exportMod('finance')">Export JSON</button>
+      <button class="btn primary sm" onclick="financeForm('account')">+ Account</button>
+      <button class="btn sm" onclick="financeForm('debt')">+ Debt</button>
+      <button class="btn sm" onclick="financeForm('income')">+ Income</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">Net Position</div><div class="val ${net>=0?'pos':'neg'}">${fmtMoney(net)}</div><div class="meta">assets ${fmtMoney(assets)} / liab ${fmtMoney(liab)}</div></div>
+    <div class="stat"><div class="k">Monthly Obligations</div><div class="val amber">${fmtMoney(oblig)}</div><div class="meta">${breakdown.length} recurring payments</div></div>
+    <div class="stat"><div class="k">Cash Runway</div><div class="val">${runway===Infinity?'∞':runway.toFixed(1)}<span style="font-size:13px;color:var(--muted)"> mo</span></div><div class="meta">liquid ${fmtMoney(assets)}</div></div>
+    <div class="stat"><div class="k">Health Score</div><div class="val"><span class="health-dot ${dotClass}"></span>${h.label}</div><div class="meta">debt/asset ${h.ratio===Infinity?'∞':h.ratio.toFixed(2)}</div></div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr;gap:18px">
+    <div class="card">
+      <h3 class="section-title">Accounts &amp; Cards</h3>
+      ${DB.finance.accounts.length?`<table><thead><tr><th>Name</th><th>Type</th><th>Balance</th><th>Limit</th><th>Min Pay</th><th>APR</th><th>Statement</th><th>Due</th><th></th></tr></thead><tbody>
+        ${DB.finance.accounts.map(a=>`<tr>
+          <td>${esc(a.name)}</td><td><span class="tag">${a.type}</span></td>
+          <td class="${a.type==='credit'?'':''}">${fmtMoney(a.balance)}</td>
+          <td>${a.type==='credit'?fmtMoney(a.creditLimit):'-'}</td>
+          <td>${a.type==='credit'?fmtMoney(a.minPayment):'-'}</td>
+          <td>${a.type==='credit'?(num(a.apr)+'%'):'-'}</td>
+          <td>${esc(a.statementDate||'-')}</td><td>${esc(a.dueDate||'-')}</td>
+          <td class="row-actions"><button class="icon-btn minus" onclick="delAccount('${a.id}')">×</button></td>
+        </tr>`).join('')}
+      </tbody></table>`:'<div class="empty">No accounts yet. Add a credit card or bank account.</div>'}
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">Debts &amp; Installments</h3>
+      ${DB.finance.debts.length?`<table><thead><tr><th>Name</th><th>Total</th><th>Remaining</th><th>Monthly</th><th>End date</th><th>Linked</th><th></th></tr></thead><tbody>
+        ${DB.finance.debts.map(d=>{const acc=DB.finance.accounts.find(a=>a.id===d.linkedAccountId);return `<tr>
+          <td>${esc(d.name)}</td><td>${fmtMoney(d.total)}</td><td>${fmtMoney(d.remaining)}</td>
+          <td>${fmtMoney(d.monthlyPayment)}</td><td>${esc(d.endDate||'-')}</td>
+          <td>${acc?esc(acc.name):'-'}</td>
+          <td class="row-actions"><button class="icon-btn minus" onclick="delDebt('${d.id}')">×</button></td>
+        </tr>`;}).join('')}
+      </tbody></table>`:'<div class="empty">No debts or installments tracked.</div>'}
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">Monthly Obligations Breakdown</h3>
+      ${breakdown.length?`<table><thead><tr><th>Payment</th><th>Amount</th><th>Due</th></tr></thead><tbody>
+        ${breakdown.map(b=>`<tr><td>${esc(b.name)}</td><td class="amber" style="color:var(--accent)">${fmtMoney(b.amount)}</td><td>${esc(b.due||'-')}</td></tr>`).join('')}
+        <tr><td style="font-weight:600">TOTAL</td><td style="color:var(--accent);font-weight:600">${fmtMoney(oblig)}</td><td></td></tr>
+      </tbody></table>`:'<div class="empty">No recurring obligations.</div>'}
+    </div>
+
+    <div class="card">
+      <h3 class="section-title">Income &amp; Cash Flow Linkage <span style="float:right;color:var(--success)">${fmtMoney(incomeTotal)}/mo</span></h3>
+      ${DB.finance.income.length?`<table><thead><tr><th>Label</th><th>Amount</th><th>Source</th><th>Linked to</th><th></th></tr></thead><tbody>
+        ${DB.finance.income.map(i=>`<tr>
+          <td>${esc(i.label)}</td><td style="color:var(--success)">${fmtMoney(i.amount)}</td>
+          <td><span class="tag">${i.source}</span></td><td>${esc(linkLabel(i))}</td>
+          <td class="row-actions"><button class="icon-btn minus" onclick="delIncome('${i.id}')">×</button></td>
+        </tr>`).join('')}
+      </tbody></table>`:'<div class="empty">No income items. Add manually or link from a project / job.</div>'}
+    </div>
+  </div>`;
+  $('#content').innerHTML=html;
+}
+function dueDay(dateStr){if(!dateStr)return 99;const m=/(\d{1,2})$/.exec(dateStr.split('-').pop());const n=m?parseInt(m[1]):parseInt(dateStr);return isNaN(n)?50:n;}
+function linkLabel(i){
+  if(i.source==='project'){const p=DB.projects.find(p=>p.id===i.linkedId);return p?('project: '+p.name):'project (removed)';}
+  if(i.source==='job'){const j=DB.jobs.find(j=>j.id===i.linkedId);return j?('salary: '+j.company):'job (removed)';}
+  return i.expectedDate?('expected '+i.expectedDate):'manual';
+}
+
+function financeForm(kind){
+  let body='';
+  if(kind==='account'){
+    body=`<h3>Add Account / Card</h3>
+    <div class="form-grid">
+      <label class="field">Name<input id="f-name" placeholder="Amex Gold"></label>
+      <label class="field">Type<select id="f-type" onchange="toggleCC()">
+        <option value="credit">credit card</option><option value="debit">debit</option><option value="savings">savings</option></select></label>
+      <label class="field">Current balance<input id="f-balance" type="number" placeholder="0"></label>
+      <label class="field cc-only">Credit limit<input id="f-limit" type="number" placeholder="0"></label>
+      <label class="field cc-only">Min payment<input id="f-min" type="number" placeholder="0"></label>
+      <label class="field cc-only">APR %<input id="f-apr" type="number" placeholder="0"></label>
+      <label class="field cc-only">Statement date<input id="f-stmt" placeholder="e.g. 2026-07-01 or 1"></label>
+      <label class="field cc-only">Due date<input id="f-due" placeholder="e.g. 2026-07-15 or 15"></label>
+    </div>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveAccount()">Add account</button></div>`;
+  }else if(kind==='debt'){
+    body=`<h3>Add Debt / Installment</h3>
+    <div class="form-grid">
+      <label class="field">Name<input id="f-name" placeholder="Car loan"></label>
+      <label class="field">Total amount<input id="f-total" type="number" placeholder="0"></label>
+      <label class="field">Remaining<input id="f-remaining" type="number" placeholder="0"></label>
+      <label class="field">Monthly payment<input id="f-monthly" type="number" placeholder="0"></label>
+      <label class="field">End date<input id="f-end" placeholder="2027-12-01"></label>
+      <label class="field">Linked account<select id="f-linked"><option value="">none</option>
+        ${DB.finance.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('')}</select></label>
+    </div>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveDebt()">Add debt</button></div>`;
+  }else{
+    body=`<h3>Add Income</h3>
+    <div class="form-grid">
+      <label class="field">Label<input id="f-label" placeholder="Monthly salary"></label>
+      <label class="field">Amount (monthly)<input id="f-amount" type="number" placeholder="0"></label>
+      <label class="field">Source<select id="f-source" onchange="toggleIncomeLink()">
+        <option value="manual">manual</option><option value="project">from project</option><option value="job">salary from job</option></select></label>
+      <label class="field link-project" style="display:none">Project<select id="f-link-project"><option value="">select</option>
+        ${DB.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></label>
+      <label class="field link-job" style="display:none">Job<select id="f-link-job"><option value="">select</option>
+        ${DB.jobs.map(j=>`<option value="${j.id}">${esc(j.company)} - ${esc(j.role)}</option>`).join('')}</select></label>
+      <label class="field link-date">Expected date<input id="f-expected" placeholder="2026-07-01"></label>
+    </div>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveIncome()">Add income</button></div>`;
+  }
+  openModal(body);
+  if(kind==='account')toggleCC();
+}
+function toggleCC(){const cc=$('#f-type').value==='credit';document.querySelectorAll('.cc-only').forEach(e=>e.style.display=cc?'flex':'none');}
+function toggleIncomeLink(){
+  const v=$('#f-source').value;
+  $('.link-project').style.display=v==='project'?'flex':'none';
+  $('.link-job').style.display=v==='job'?'flex':'none';
+  $('.link-date').style.display=v==='manual'?'flex':'none';
+}
+function saveAccount(){
+  const name=$('#f-name').value.trim();if(!name)return toast('Name required','danger');
+  DB.finance.accounts.push({id:uid(),name,type:$('#f-type').value,balance:num($('#f-balance').value),
+    creditLimit:num($('#f-limit')?.value),minPayment:num($('#f-min')?.value),apr:num($('#f-apr')?.value),
+    statementDate:$('#f-stmt')?.value.trim(),dueDate:$('#f-due')?.value.trim()});
+  save();closeModal();render();toast('Account added','success');
+}
+function saveDebt(){
+  const name=$('#f-name').value.trim();if(!name)return toast('Name required','danger');
+  DB.finance.debts.push({id:uid(),name,total:num($('#f-total').value),remaining:num($('#f-remaining').value),
+    monthlyPayment:num($('#f-monthly').value),endDate:$('#f-end').value.trim(),linkedAccountId:$('#f-linked').value});
+  save();closeModal();render();toast('Debt added','success');
+}
+function saveIncome(){
+  const label=$('#f-label').value.trim();if(!label)return toast('Label required','danger');
+  const source=$('#f-source').value;
+  DB.finance.income.push({id:uid(),label,amount:num($('#f-amount').value),source,
+    linkedId:source==='project'?$('#f-link-project').value:source==='job'?$('#f-link-job').value:'',
+    expectedDate:source==='manual'?$('#f-expected').value.trim():''});
+  save();closeModal();render();toast('Income added','success');
+}
+function delAccount(id){DB.finance.accounts=DB.finance.accounts.filter(a=>a.id!==id);save();render();toast('Account removed');}
+function delDebt(id){DB.finance.debts=DB.finance.debts.filter(d=>d.id!==id);save();render();toast('Debt removed');}
+function delIncome(id){DB.finance.income=DB.finance.income.filter(i=>i.id!==id);save();render();toast('Income removed');}
+
+/* ============================= PROJECTS ============================= */
+function lastTickDate(p){if(!p.ticks||!p.ticks.length)return null;return p.ticks.map(t=>t.date).sort().pop();}
+function projState(p){
+  if(p.manualState)return p.manualState; // 'cancelled'
+  const last=lastTickDate(p)||p.createdAt;
+  const d=daysSince(last);
+  if(d>=7)return 'postponed';
+  if(d>=3)return 'warning';
+  return 'ongoing';
+}
+function syncProjectStates(){
+  let changed=false;
+  DB.projects.forEach(p=>{
+    const s=projState(p);
+    if(p.lastState&&p.lastState!==s){
+      if(s==='warning')toast(`"${p.name}" entered Warning: no tick for 3 days`);
+      else if(s==='postponed')toast(`"${p.name}" auto-moved to Postponed/Terminated`,'danger');
+      changed=true;
+    }
+    if(p.lastState!==s){p.lastState=s;changed=true;}
+  });
+  if(changed)save();
+}
+
+function renderProjects(){
+  syncProjectStates();
+  const lanes=[
+    {key:'ongoing',label:'On-going'},
+    {key:'warning',label:'Warning'},
+    {key:'postponed',label:'Postponed / Terminated'},
+    {key:'cancelled',label:'Archived / Cancelled'},
+  ];
+  const grouped={ongoing:[],warning:[],postponed:[],cancelled:[]};
+  DB.projects.forEach(p=>{grouped[projState(p)].push(p);});
+
+  let html=`
+  <div class="module-head">
+    <div><h2>Projects</h2><div class="desc">Daily ticks, auto state transitions and a 90 day activity heatmap</div></div>
+    <div class="row-actions">
+      <button class="btn sm" onclick="exportMod('projects')">Export JSON</button>
+      <button class="btn primary sm" onclick="projectForm()">+ Project</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <h3 class="section-title">Activity Heatmap <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400">rolling 90 days</span></h3>
+    <div class="heatmap-wrap"><div class="heatmap" id="heatmap"></div></div>
+    <div class="hlegend">Less <span class="hcell"></span><span class="hcell l1"></span><span class="hcell l2"></span><span class="hcell l3"></span><span class="hcell l4"></span> More</div>
+  </div>
+
+  <div class="lanes">
+    ${lanes.map(l=>`
+    <div class="lane ${l.key==='warning'?'warn':''}">
+      <h3>${l.label} <span class="count">${grouped[l.key].length}</span></h3>
+      ${grouped[l.key].length?grouped[l.key].map(p=>projCard(p,l.key)).join(''):'<div class="empty" style="padding:10px">empty</div>'}
+    </div>`).join('')}
+  </div>`;
+  $('#content').innerHTML=html;
+  renderHeatmap();
+}
+function projCard(p,state){
+  const last=lastTickDate(p);
+  const lastNote=p.ticks&&p.ticks.length?p.ticks.slice().sort((a,b)=>a.date<b.date?1:-1)[0].note:'';
+  const tickedToday=p.ticks&&p.ticks.some(t=>t.date===todayY());
+  const archived=state==='cancelled';
+  return `<div class="proj ${state==='warning'?'warn':''}">
+    <div class="pname"><span>${esc(p.name)}</span>
+      ${state==='warning'?'<span class="tag amber">caution</span>':''}
+      ${state==='postponed'?'<span class="tag red">terminated</span>':''}
+    </div>
+    ${p.description?`<div class="pdesc">${esc(p.description)}</div>`:''}
+    <div class="pmeta">ticks: ${p.ticks?p.ticks.length:0} · last: ${last||'never'}${last?' ('+daysSince(last)+'d ago)':''}</div>
+    ${lastNote?`<div class="pnote">${esc(lastNote)}</div>`:''}
+    <div class="pactions">
+      ${!archived?`<button class="icon-btn" title="${tickedToday?'Update today note':'Tick today'}" onclick="tickProject('${p.id}')">${tickedToday?'✎':'✓'}</button>`:''}
+      ${!archived?`<button class="icon-btn minus" title="Remove to Archived/Cancelled" onclick="cancelProject('${p.id}')">−</button>`:
+        `<button class="icon-btn" title="Restore" onclick="restoreProject('${p.id}')">↺</button>`}
+      <button class="icon-btn minus" title="Delete permanently" onclick="deleteProject('${p.id}')">×</button>
+    </div>
+  </div>`;
+}
+function projectForm(){
+  openModal(`<h3>Add Project</h3>
+    <div class="form-grid">
+      <label class="field" style="grid-column:1/-1">Name<input id="p-name" placeholder="Personal website redesign"></label>
+      <label class="field" style="grid-column:1/-1">Description (optional)<textarea id="p-desc" placeholder="What is this about"></textarea></label>
+    </div>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveProject()">Add project</button></div>`);
+}
+function saveProject(){
+  const name=$('#p-name').value.trim();if(!name)return toast('Name required','danger');
+  DB.projects.push({id:uid(),name,description:$('#p-desc').value.trim(),createdAt:todayY(),ticks:[],manualState:null,lastState:'ongoing'});
+  save();closeModal();render();toast('Project added','success');
+}
+function tickProject(id){
+  const p=DB.projects.find(p=>p.id===id);if(!p)return;
+  const existing=p.ticks.find(t=>t.date===todayY());
+  openModal(`<h3>${existing?'Update':'Tick'} progress: ${esc(p.name)}</h3>
+    <label class="field">Progress note (max 140 chars, optional)
+      <textarea id="tick-note" maxlength="140" placeholder="What did you do today">${existing?esc(existing.note):''}</textarea></label>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--mono)">${todayY()}</div>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveTick('${id}')">Save tick</button></div>`);
+}
+function saveTick(id){
+  const p=DB.projects.find(p=>p.id===id);if(!p)return;
+  const note=$('#tick-note').value.trim().slice(0,140);
+  const existing=p.ticks.find(t=>t.date===todayY());
+  if(existing)existing.note=note;else p.ticks.push({date:todayY(),note});
+  p.manualState=null; // ticking reactivates
+  p.lastState='ongoing';
+  save();closeModal();render();toast('Progress ticked','success');
+}
+function cancelProject(id){const p=DB.projects.find(p=>p.id===id);if(p){p.manualState='cancelled';save();render();toast(`"${p.name}" moved to Archived/Cancelled`);}}
+function restoreProject(id){const p=DB.projects.find(p=>p.id===id);if(p){p.manualState=null;p.lastState='ongoing';save();render();toast(`"${p.name}" restored`,'success');}}
+function deleteProject(id){DB.projects=DB.projects.filter(p=>p.id!==id);save();render();toast('Project deleted');}
+
+function renderHeatmap(){
+  const el=$('#heatmap');if(!el)return;
+  // build map date->{count, items:[{name,note}]}
+  const map={};
+  DB.projects.forEach(p=>(p.ticks||[]).forEach(t=>{
+    if(!map[t.date])map[t.date]={count:0,items:[]};
+    map[t.date].count++;map[t.date].items.push({name:p.name,note:t.note});
+  }));
+  const max=Math.max(1,...Object.values(map).map(v=>v.count));
+  // 90 days ending today, align to start on Sunday for grid
+  const end=new Date(todayY());
+  const start=new Date(end);start.setDate(start.getDate()-89);
+  // pad start back to previous Sunday
+  const pad=new Date(start);pad.setDate(pad.getDate()-pad.getDay());
+  let cells='';
+  for(let d=new Date(pad);d<=end;d.setDate(d.getDate()+1)){
+    const key=ymd(d);
+    const inRange=d>=start;
+    const data=map[key];
+    let lvl=0;
+    if(data){const r=data.count/max;lvl=r>0.75?4:r>0.5?3:r>0.25?2:1;}
+    const cls=inRange?(['','l1','l2','l3','l4'][lvl]):'';
+    const opacity=inRange?'':'opacity:.25';
+    let title=key;
+    if(data){title+=' — '+data.count+' tick'+(data.count>1?'s':'')+'\n'+data.items.map(i=>'• '+i.name+(i.note?': '+i.note:'')).join('\n');}
+    else title+=' — no activity';
+    cells+=`<div class="hcell ${cls}" style="${opacity}" title="${esc(title)}"></div>`;
+  }
+  el.innerHTML=cells;
+}
+
+/* ============================= JOBS ============================= */
+const STAGES=['CV Sent','Interview Scheduled','Interview Done','Offer/Pass','Fail','No Response','Stopped Processing'];
+const TERMINAL=['Offer/Pass','Fail','No Response','Stopped Processing'];
+const WIN=['Offer/Pass'];
+const REASONS=['salary','fit','skills','ghosted','withdrew'];
+
+function jobHasStage(j,s){return j.stages&&j.stages.some(x=>x.stage===s);}
+function renderJobs(){
+  let html=`
+  <div class="module-head">
+    <div><h2>Job Applications</h2><div class="desc">Pipeline tracking and analytics</div></div>
+    <div class="row-actions">
+      <button class="btn sm" onclick="exportMod('jobs')">Export JSON</button>
+      <button class="btn primary sm" onclick="jobForm()">+ Application</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="${jobsTab==='pipeline'?'active':''}" onclick="setJobsTab('pipeline')">Pipeline</button>
+    <button class="${jobsTab==='archive'?'active':''}" onclick="setJobsTab('archive')">Archive</button>
+    <button class="${jobsTab==='analytics'?'active':''}" onclick="setJobsTab('analytics')">Analytics</button>
+  </div>
+  <div id="jobsBody"></div>`;
+  $('#content').innerHTML=html;
+  if(jobsTab==='analytics')renderAnalytics();
+  else renderJobList(jobsTab==='archive');
+}
+function setJobsTab(t){jobsTab=t;renderJobs();}
+function renderJobList(archived){
+  const list=DB.jobs.filter(j=>!!j.archived===archived);
+  if(!list.length){$('#jobsBody').innerHTML=`<div class="empty">${archived?'No archived applications.':'No active applications. Add one to start tracking.'}</div>`;return;}
+  $('#jobsBody').innerHTML=list.map(j=>jobCard(j)).join('');
+}
+function jobCard(j){
+  return `<div class="job">
+    <div class="jhead">
+      <div>
+        <div class="jtitle">${esc(j.role)}</div>
+        <div class="jcompany">${esc(j.company)}</div>
+        <div class="jmeta">
+          ${j.category?`<span class="tag">${esc(j.category)}</span>`:''}
+          <span>source: ${esc(j.source)}</span>
+          ${j.deadline?`<span>deadline: ${esc(j.deadline)}</span>`:''}
+          ${j.link?`<a href="${esc(j.link)}" target="_blank" rel="noopener">job link</a>`:''}
+          ${j.reasonTag?`<span class="tag red">${esc(j.reasonTag)}</span>`:''}
+        </div>
+      </div>
+      <div class="row-actions">
+        ${j.archived?`<button class="btn sm" onclick="unarchiveJob('${j.id}')">Restore</button>`:''}
+        <button class="btn sm danger" onclick="deleteJob('${j.id}')">Delete</button>
+      </div>
+    </div>
+    ${j.description?`<div class="pnote" style="margin-top:10px">${esc(j.description).slice(0,260)}</div>`:''}
+    <div class="stages">
+      ${STAGES.map(s=>{
+        const tick=j.stages.find(x=>x.stage===s);
+        const cls=tick?('done'+(TERMINAL.includes(s)?(WIN.includes(s)?' win':' terminal'):'')):'';
+        return `<button class="stage ${cls}" onclick="tickStage('${j.id}','${s}')">${s}${tick?`<span class="ts">${tick.timestamp}</span>`:''}</button>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button class="btn sm ghost" onclick="jobNote('${j.id}')">+ Note</button>
+      <select class="reason-sel" onchange="setReason('${j.id}',this.value)" style="width:auto;font-size:11px;padding:5px 8px">
+        <option value="">outcome reason...</option>
+        ${REASONS.map(r=>`<option value="${r}" ${j.reasonTag===r?'selected':''}>${r}</option>`).join('')}
+      </select>
+    </div>
+    ${j.notes&&j.notes.length?`<div style="margin-top:8px">${j.notes.map(n=>`<div class="pnote">${esc(n.text)} <span style="color:var(--muted);font-size:10px">${n.ts}</span></div>`).join('')}</div>`:''}
+  </div>`;
+}
+function jobForm(){
+  openModal(`<h3>Add Application</h3>
+    <div class="form-grid">
+      <label class="field">Company<input id="j-company" placeholder="Acme Inc"></label>
+      <label class="field">Role title<input id="j-role" placeholder="Senior Engineer"></label>
+      <label class="field">Category / tag<input id="j-category" placeholder="Frontend, ML, PM..."></label>
+      <label class="field">Source<select id="j-source"><option>LinkedIn</option><option>website</option><option>referral</option><option>other</option></select></label>
+      <label class="field">Deadline<input id="j-deadline" placeholder="2026-07-01"></label>
+      <label class="field" style="grid-column:1/-1">Job link (URL)<input id="j-link" placeholder="https://..."></label>
+      <label class="field" style="grid-column:1/-1">Job description (optional)<textarea id="j-desc" placeholder="Paste JD here"></textarea></label>
+    </div>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveJob()">Add application</button></div>`);
+}
+function saveJob(){
+  const company=$('#j-company').value.trim(),role=$('#j-role').value.trim();
+  if(!company||!role)return toast('Company and role required','danger');
+  DB.jobs.push({id:uid(),company,role,category:$('#j-category').value.trim(),source:$('#j-source').value,
+    deadline:$('#j-deadline').value.trim(),link:$('#j-link').value.trim(),description:$('#j-desc').value.trim(),
+    stages:[],notes:[],reasonTag:'',archived:false,createdAt:todayY()});
+  save();closeModal();render();toast('Application added','success');
+}
+function tickStage(id,stage){
+  const j=DB.jobs.find(j=>j.id===id);if(!j)return;
+  const existing=j.stages.findIndex(x=>x.stage===stage);
+  if(existing>=0){
+    j.stages.splice(existing,1); // toggle off
+  }else{
+    const now=new Date();
+    j.stages.push({stage,timestamp:now.toISOString().slice(0,16).replace('T',' ')});
+    if(TERMINAL.includes(stage)&&!j.archived){j.archived=true;toast(`"${j.company}" → ${stage}: moved to Archive`,WIN.includes(stage)?'success':'danger');}
+  }
+  // if no terminal stages remain, unarchive
+  if(j.archived&&!j.stages.some(x=>TERMINAL.includes(x.stage)))j.archived=false;
+  save();render();
+}
+function jobNote(id){
+  openModal(`<h3>Add note</h3>
+    <label class="field">Note<textarea id="jn-text" placeholder="Recruiter said..."></textarea></label>
+    <div class="form-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveJobNote('${id}')">Save note</button></div>`);
+}
+function saveJobNote(id){
+  const j=DB.jobs.find(j=>j.id===id);if(!j)return;
+  const text=$('#jn-text').value.trim();if(!text)return closeModal();
+  j.notes=j.notes||[];j.notes.push({text,ts:todayY()});
+  save();closeModal();render();toast('Note added','success');
+}
+function setReason(id,r){const j=DB.jobs.find(j=>j.id===id);if(j){j.reasonTag=r;save();toast('Outcome reason set');}}
+function unarchiveJob(id){const j=DB.jobs.find(j=>j.id===id);if(j){j.archived=false;save();render();toast('Restored to pipeline','success');}}
+function deleteJob(id){DB.jobs=DB.jobs.filter(j=>j.id!==id);save();render();toast('Application deleted');}
+
+function renderAnalytics(){
+  const all=DB.jobs;
+  const total=all.length;
+  const active=all.filter(j=>!j.archived).length;
+  const cvSent=all.filter(j=>jobHasStage(j,'CV Sent')).length;
+  const interviewed=all.filter(j=>jobHasStage(j,'Interview Scheduled')||jobHasStage(j,'Interview Done')).length;
+  const offers=all.filter(j=>jobHasStage(j,'Offer/Pass')).length;
+  const cv2int=cvSent?Math.round(interviewed/cvSent*100):0;
+  const int2off=interviewed?Math.round(offers/interviewed*100):0;
+
+  // category breakdown
+  const cats={};all.forEach(j=>{const c=j.category||'untagged';cats[c]=(cats[c]||0)+1;});
+  // reason breakdown
+  const reasons={};all.forEach(j=>{if(j.reasonTag)reasons[j.reasonTag]=(reasons[j.reasonTag]||0)+1;});
+
+  $('#jobsBody').innerHTML=`
+  <div class="stats">
+    <div class="stat"><div class="k">Total Applications</div><div class="val">${total}</div></div>
+    <div class="stat"><div class="k">Active Pipeline</div><div class="val amber">${active}</div></div>
+    <div class="stat"><div class="k">CV → Interview</div><div class="val">${cv2int}%</div><div class="meta">${interviewed}/${cvSent}</div></div>
+    <div class="stat"><div class="k">Interview → Offer</div><div class="val ${int2off>0?'pos':''}">${int2off}%</div><div class="meta">${offers}/${interviewed}</div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:18px">
+    <div class="card"><h3 class="section-title">By Category / Role</h3>
+      ${Object.keys(cats).length?Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12.5px"><span>${esc(k)}</span><span class="amber" style="color:var(--accent)">${v}</span></div>`).join(''):'<div class="empty">No data</div>'}
+    </div>
+    <div class="card"><h3 class="section-title">Outcome Reasons</h3>
+      ${Object.keys(reasons).length?Object.entries(reasons).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12.5px"><span>${esc(k)}</span><span style="color:var(--danger)">${v}</span></div>`).join(''):'<div class="empty">No outcome reasons tagged</div>'}
+    </div>
+  </div>
+  <div class="chart-box"><canvas id="timelineChart"></canvas></div>`;
+
+  // timeline: CV Sent timestamps grouped by ISO week
+  const weeks={};
+  all.forEach(j=>{
+    const cv=j.stages.find(x=>x.stage==='CV Sent')||j.stages[0];
+    const dateStr=cv?cv.timestamp.slice(0,10):j.createdAt;
+    if(!dateStr)return;
+    const wk=weekKey(new Date(dateStr));
+    weeks[wk]=(weeks[wk]||0)+1;
+  });
+  const labels=Object.keys(weeks).sort();
+  const data=labels.map(l=>weeks[l]);
+  if(charts.timeline)charts.timeline.destroy();
+  const ctx=$('#timelineChart');
+  if(ctx){
+    charts.timeline=new Chart(ctx,{type:'bar',
+      data:{labels:labels.length?labels:['no data'],datasets:[{label:'Applications',data:data.length?data:[0],backgroundColor:'#E8A838',borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},title:{display:true,text:'Applications over time (by week)',color:'#9AA1AE',font:{size:13}}},
+        scales:{x:{ticks:{color:'#6B7280',font:{family:'monospace',size:10}},grid:{color:'#262B36'}},
+                y:{beginAtZero:true,ticks:{color:'#6B7280',precision:0},grid:{color:'#262B36'}}}}});
+  }
+}
+function weekKey(d){
+  const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const day=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-day);
+  const yearStart=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  const wk=Math.ceil(((t-yearStart)/86400000+1)/7);
+  return t.getUTCFullYear()+'-W'+String(wk).padStart(2,'0');
+}
+
+/* ============================= EXPORT ============================= */
+function exportMod(mod){
+  const payload={module:mod,exportedAt:new Date().toISOString(),data:mod==='finance'?DB.finance:mod==='projects'?DB.projects:DB.jobs};
+  download(`personal-tracking-${mod}-${todayY()}.json`,payload);
+}
+
+/* ============================= ROUTER ============================= */
+function render(){
+  renderTop();
+  if(activeMod==='finance')renderFinance();
+  else if(activeMod==='projects')renderProjects();
+  else renderJobs();
+}
+$('#nav').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-mod]');if(!b)return;
+  activeMod=b.dataset.mod;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x===b));
+  render();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+render();
+</script>
+</body>
+</html>
